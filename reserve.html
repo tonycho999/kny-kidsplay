@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약하기 - 서서울호수공원 어린이 물놀이장</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="container reserve-container">
+        <h2 style="text-align: center; margin-bottom: 2rem;">예약하기</h2>
+        
+        <div class="location-tabs" style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+            <label class="tab-label" style="padding:10px 20px; border:2px solid #0056b3; border-radius:5px; font-weight:bold; background-color: #f8f9fa;">
+                <input type="radio" name="locationSelect" value="서서울호수공원" checked style="display:none;">
+                <span class="tab-text" style="color:#0056b3;">📍 서서울호수공원 문화테크광장</span>
+            </label>
+        </div>
+        
+        <div class="reserve-grid">
+            <div class="step-box">
+                <div class="step-title">날짜 선택</div>
+                <div class="calendar-header">
+                    <button type="button" id="prevMonth">&lt;</button>
+                    <span id="currentMonth">2026년 7월</span>
+                    <button type="button" id="nextMonth">&gt;</button>
+                </div>
+                <table class="calendar-table">
+                    <thead>
+                        <tr><th style="color:red">일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th style="color:blue">토</th></tr>
+                    </thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+                <p class="step-desc">원하시는 날짜를 선택하세요.</p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title" id="selectedDateDisplay">날짜를 먼저 선택해주세요</div>
+                <div class="time-list" id="timeList"></div>
+            </div>
+
+            <div class="step-box">
+                <div class="step-title">예약자 정보</div>
+                <p class="step-desc" style="text-align: right; font-size: 0.8rem;">보호자 1인 ~ 4인 예약 가능</p>
+                <form id="reserveForm" class="detail-form">
+                    <input type="hidden" id="date" name="date" required>
+                    
+                    <div class="form-row">
+                        <label>이름 *</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label>이메일 *</label>
+                        <div class="flex-row">
+                            <input type="text" id="email1" style="width:40%" required> @ 
+                            <input type="text" id="email2" style="width:50%" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>연락처 *</label>
+                        <div class="flex-row">
+                            <select id="phone1" style="width:30%"><option>010</option></select> -
+                            <input type="text" id="phone2" style="width:30%" maxlength="4" required> -
+                            <input type="text" id="phone3" style="width:30%" maxlength="4" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>생년월일 *</label>
+                        <div class="flex-row">
+                            <input type="number" id="birthYear" placeholder="YYYY" style="width:35%" required> 년
+                            <input type="number" id="birthMonth" placeholder="MM" style="width:25%" required> 월
+                            <input type="number" id="birthDay" placeholder="DD" style="width:25%" required> 일
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label>주소 *</label>
+                        <div class="flex-row" style="margin-bottom: 5px;">
+                            <input type="text" id="postcode" placeholder="우편번호" readonly style="width:50%; background:#f0f0f0;">
+                            <button type="button" onclick="execDaumPostcode()" class="btn-black">주소 검색</button>
+                        </div>
+                        <input type="text" id="address1" placeholder="기본주소" readonly style="width:100%; margin-bottom:5px; background:#f0f0f0;" required>
+                        <input type="text" id="address2" placeholder="상세주소" style="width:100%;" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>인원 *</label>
+                        <div class="counter-box">
+                            <button type="button" id="btnMinus">-</button>
+                            <input type="number" id="people" value="1" min="1" max="5" readonly>
+                            <button type="button" id="btnPlus">+</button>
+                        </div>
+                    </div>
+
+                    <div class="privacy-box">
+                        <strong>개인정보 수집 및 이용 안내</strong>
+                        <p>- 수집항목: 성명, 이메일, 연락처, 생년월일, 주소</p>
+                        <p>- 이용목적: 예약 관리 및 본인 확인</p>
+                        <label class="privacy-agree">
+                            <input type="checkbox" id="privacyAgree" required> (필수) 개인정보 수집 및 이용에 동의합니다.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" style="margin-top: 1rem;">예약 신청하기</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/main.js"></script>
+    <script src="js/reserve.js"></script>
+
+    <script>
+        async function loadIncludes() {
+            try {
+                const headerRes = await fetch('header.html');
+                document.getElementById('header-placeholder').innerHTML = await headerRes.text();
+                
+                const footerRes = await fetch('footer.html');
+                document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
+                
+                const menuToggle = document.getElementById('menuToggle');
+                const navMenu = document.getElementById('navMenu');
+                if (menuToggle && navMenu) {
+                    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+                }
+            } catch (error) { console.error("헤더/푸터 로드 실패", error); }
+        }
+        loadIncludes();
+
+        // 주소 검색 API 연동
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('postcode').value = data.zonecode;
+                    document.getElementById('address1').value = data.address;
+                    document.getElementById('address2').focus();
+                }
+            }).open();
+        }
+    </script>
+</body>
+</html>

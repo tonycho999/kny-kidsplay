@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 - 예약 관리</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        /* 검색 영역 스타일 간단 추가 */
+        .search-area {
+            margin: 1.5rem 0;
+            display: flex;
+            flex-wrap: wrap; /* 여러 줄 허용 */
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .search-area input, .search-area select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <h1>⚙️ 서서울 호수공원 관리자 예약 관리 시스템</h1>
+        <a href="../index.html" class="home-btn">홈페이지로 돌아가기</a>
+    </header>
+
+    <main class="admin-container">
+        <h2>예약 내역 리스트</h2>
+        
+        <div class="search-area">
+            <select id="filterLocation">
+                <option value="">서서울 호수공원</option>
+            </select>
+
+            <input type="date" id="filterDate">
+            
+            <select id="filterTime">
+                <option value="">모든 회차</option>
+                <option value="1회차">1회차</option>
+                <option value="2회차">2회차</option>
+            </select>
+
+            <input type="text" id="searchInput" placeholder="이름, 연락처 또는 예약번호 검색" style="width:250px;">
+        </div>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>예약일시(회차)</th>
+                    <th>예약번호</th>
+                    <th>예약자 정보</th>
+                    <th>주소</th>
+                    <th>인원</th>
+                    <th>상태</th>
+                </tr>
+            </thead>
+            <tbody id="reservationList">
+                <tr><td colspan="6">데이터를 불러오는 중입니다...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="../js/admin.js"></script>
+</body>
+</html>

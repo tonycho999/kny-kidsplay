@@ -1,0 +1,9 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Malgun Gothic', sans-serif; background: #f0f2f5; color: #333; }
+.admin-header { background: #343af0; color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+.home-btn { color: #edec9a; text-decoration: none; font-weight: bold; }
+.admin-container { padding: 2rem; max-width: 1000px; margin: 0 auto; }
+.admin-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.admin-table th, .admin-table td { padding: 1rem; text-align: center; border-bottom: 1px solid #dee2e6; }
+.admin-table th { background: #e9ecef; }
+.status.confirm { background: #28a745; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.9rem; }

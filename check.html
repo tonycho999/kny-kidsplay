@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예약 조회 및 취소 - 서서울호수공원 어린이 물놀이장</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .check-container { max-width: 500px; margin: 0 auto; }
+        .check-form { background: #fff; padding: 2rem; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .check-form input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        .result-box { display: none; background: #f8f9fa; border: 1px solid #cce5ff; border-radius: 8px; padding: 2rem; text-align: left; }
+        .result-box h3 { color: #0056b3; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .result-item { margin-bottom: 10px; font-size: 1.1rem; }
+        .result-item strong { display: inline-block; width: 100px; color: #555; }
+        
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.9rem; }
+        .status-badge.wait { background: #ffc107; }
+        .status-badge.confirm { background: #28a745; }
+        .status-badge.cancel { background: #6c757d; }
+        
+        .cancel-btn { background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+        .cancel-btn:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="container check-container">
+        <br><br>
+        <h2 style="text-align: center; margin-bottom: 2rem;">예약 조회 및 취소</h2>
+        <br>
+        <br>
+        <form id="checkForm" class="check-form">
+            <label for="searchDate"><strong>예약 날짜</strong></label>
+            <input type="date" id="searchDate" required>
+            
+            <label for="searchPhone"><strong>연락처</strong> (하이픈 '-' 없이 숫자만 입력)</label>
+            <input type="tel" id="searchPhone" placeholder="예: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
+            
+            <button type="submit" class="submit-btn" style="width:100%; padding:12px; margin-top:10px;">조회하기</button>
+        </form>
+
+        <div id="resultBox" class="result-box">
+            <h3>조회 결과</h3>
+            <div class="result-item"><strong>장소:</strong> <span id="resLocation"></span></div>
+            <div class="result-item"><strong>예약일시:</strong> <span id="resDate"></span> / <span id="resTime"></span></div>
+            <div class="result-item"><strong>예약자명:</strong> <span id="resName"></span></div>
+            <div class="result-item"><strong>예약인원:</strong> <span id="resPeople"></span>명</div>
+            <div class="result-item" style="margin-top: 15px;">
+                <strong>현재상태:</strong> <span id="resStatus" class="status-badge"></span>
+            </div>
+            
+            <button id="cancelBtn" class="cancel-btn">이 예약 취소하기</button>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/main.js"></script>
+
+    <script>
+        async function loadIncludes() {
+            try {
+                const headerRes = await fetch('header.html');
+                document.getElementById('header-placeholder').innerHTML = await headerRes.text();
+                
+                const footerRes = await fetch('footer.html');
+                document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
+                
+                const menuToggle = document.getElementById('menuToggle');
+                const navMenu = document.getElementById('navMenu');
+                if (menuToggle && navMenu) {
+                    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+                }
+            } catch (error) { console.error("헤더/푸터 로드 실패", error); }
+        }
+        loadIncludes();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 💡 주의: 나중에 서서울호수공원 전용 Cloudflare Workers를 배포하시면 아래 주소를 꼭 새 주소로 변경해 주세요!
+            const API_BASE = 'https://reservation-api.tonycho999.workers.dev';
+            
+            const checkForm = document.getElementById('checkForm');
+            const resultBox = document.getElementById('resultBox');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            let currentReservation = null;
+
+            // 1. 조회하기
+            checkForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const searchDate = document.getElementById('searchDate').value;
+                const rawPhone = document.getElementById('searchPhone').value.trim();
+                
+                // DB 형식과 맞추기 위해 자바스크립트가 알아서 하이픈을 삽입합니다.
+                let formattedPhone = rawPhone;
+                if (rawPhone.length === 11) {
+                    formattedPhone = rawPhone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                } else if (rawPhone.length === 10) {
+                    formattedPhone = rawPhone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                }
+                
+                const submitBtn = checkForm.querySelector('.submit-btn');
+                submitBtn.textContent = '조회 중...';
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/check-reservation`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ date: searchDate, phone: formattedPhone })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        const data = result.data;
+                        
+                        currentReservation = { reservation_code: data.reservation_code, phone: data.phone };       
+                        
+                        document.getElementById('resLocation').textContent = data.location;
+                        document.getElementById('resDate').textContent = data.date;
+                        document.getElementById('resTime').textContent = data.time_slot;
+                        document.getElementById('resName').textContent = data.name;
+                        document.getElementById('resPeople').textContent = data.people;
+                        
+                        const statusEl = document.getElementById('resStatus');
+                        statusEl.textContent = data.status;
+                        statusEl.className = 'status-badge'; 
+                        
+                        if (data.status === '예약완료') statusEl.classList.add('confirm');
+                        else if (data.status === '예약취소') statusEl.classList.add('cancel');
+                        else statusEl.classList.add('wait'); 
+                        
+                        if (data.status === '예약취소') {
+                            cancelBtn.style.display = 'none';
+                        } else {
+                            cancelBtn.style.display = 'block';
+                        }
+                        
+                        resultBox.style.display = 'block';
+                    } else {
+                        alert(result.message || '조회 실패');
+                        resultBox.style.display = 'none';
+                    }
+                } catch (error) {
+                    alert('서버 오류가 발생했습니다.');
+                } finally {
+                    submitBtn.textContent = '조회하기';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // 2. 취소하기
+            cancelBtn.addEventListener('click', async () => {
+                if (!currentReservation) return;
+                
+                if (!confirm('정말로 이 예약을 취소하시겠습니까?\n취소 후에는 복구할 수 없습니다.')) return;
+                
+                cancelBtn.textContent = '취소 처리 중...';
+                cancelBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/cancel-reservation`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentReservation)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        alert('예약이 정상적으로 취소되었습니다.');
+                        location.reload(); 
+                    } else {
+                        alert(result.message || '취소 실패');
+                    }
+                } catch (error) {
+                    alert('서버 오류가 발생했습니다.');
+                } finally {
+                    cancelBtn.textContent = '이 예약 취소하기';
+                    cancelBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

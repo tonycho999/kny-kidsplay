@@ -1,0 +1,60 @@
+<style>
+    /* ⭐️ 구글 폰트 불러오기 (귀엽고 친근한 폰트) */
+    @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+    
+    /* 헤더 전체 배경색 (시원한 호수 블루 그라데이션) */
+    header {
+        background: linear-gradient(135deg, #0082c8, #005c97) !important;
+        border-bottom: none !important;
+        box-shadow: 0 4px 10px rgba(0, 92, 151, 0.3) !important;
+    }
+    
+    /* 메인 로고 타이틀 폰트 및 스타일 변경 */
+    header .logo a {
+        font-family: 'Jua', sans-serif !important;
+        color: #ffffff !important;
+        font-size: 1.8rem !important;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    /* 상단 메뉴 글자색 (흰색) 및 애니메이션 */
+    header #navMenu ul li a {
+        color: #f0f8ff !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease;
+    }
+    
+    /* 메뉴에 마우스 올렸을 때 효과 (포인트 노란색) */
+    header #navMenu ul li a:hover {
+        color: #ffeaa7 !important; 
+        text-decoration: none;
+        transform: scale(1.05);
+    }
+    
+    /* 모바일 햄버거 버튼 색상 (흰색) */
+    header .menu-toggle {
+        color: #ffffff !important;
+    }
+    
+    /* 모바일에서 메뉴 열렸을 때 배경색 자연스럽게 */
+    @media (max-width: 768px) {
+        header #navMenu.active {
+            background-color: #006baf !important;
+        }
+    }
+</style>
+
+<header>
+    <div class="logo"><a href="index.html">서서울호수공원 어린이 물놀이장</a></div>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <nav id="navMenu">
+        <ul>
+            <li><a href="period.html">운영기간안내</a></li>
+            <li><a href="guide.html">이용안내</a></li>
+            <li><a href="reserve.html">예약하기</a></li>
+            <li><a href="check.html">예약조회/취소</a></li>
+            <li><a href="location.html">오시는길</a></li>
+        </ul>
+    </nav>
+</header>
