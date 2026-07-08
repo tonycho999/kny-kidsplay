@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // === ⭐️ 2026년 서서울호수공원 운영 정책 설정 ===
+    // === ⭐️ 서서울호수공원 운영 정책 설정 ===
     const RULES = {
         "서서울호수공원": {
             start: "2026-07-21",
             end: "2026-08-23",
             closedDays: [1], // 매주 월요일(1) 휴장
             exceptions: [], 
-            capacity: 150,   // 사전예약 150명 정원
+            capacity: 150,   // ⭐️ 각 회차별 150명 정원 (1부 150명, 2부 150명)
             slots: [
                 "1부 (10:00~13:00)", 
                 "2부 (14:00~17:00)"
@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ⭐️ 새롭게 생성한 서서울호수공원 전용 API 서버 주소
     const API_BASE = 'https://kny-summerdb.tonycho999.workers.dev';
 
     let currentYear = 2026;
@@ -50,10 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === ⭐️ [임시] 주차별 예약 오픈 스케줄 반영 로직 ===
-    // 현재 정책 미정으로, 기본값인 '이용일 하루 전 19:00 오픈' 로직을 임시로 적용해 두었습니다.
+    // === ⭐️ 예약 오픈 스케줄 검증 로직 ===
     function isSelectable(dateStr, rule) {
         const [y, m, d] = dateStr.split('-').map(Number);
+        
+        // 예약하려는 타겟 날짜 (이용일)
         const targetDate = new Date(y, m - 1, d, 0, 0, 0);
         
         const start = new Date(rule.start);
@@ -65,10 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetDate < start || targetDate > end) return false;
         if (!rule.exceptions?.includes(dateStr) && rule.closedDays.includes(targetDate.getDay())) return false;
 
-        // 2. 예약 오픈 시간 설정 (임시: 하루 전 19:00)
+        // 2. 예약 오픈 및 마감 시간 설정 (⭐️ 이용일 하루 전 19:00 ~ 22:59:59)
         const openTime = new Date(targetDate);
-        openTime.setDate(openTime.getDate() - 1); // 하루 전
-        openTime.setHours(19, 0, 0, 0);           // 19시 정각
+        openTime.setDate(openTime.getDate() - 1); 
+        openTime.setHours(19, 0, 0, 0); 
+        
+        const closeTime = new Date(targetDate);
+        closeTime.setDate(closeTime.getDate() - 1);
+        closeTime.setHours(22, 59, 59, 999); 
 
         // 3. 현재 한국 시간(KST) 구하기
         const formatter = new Intl.DateTimeFormat('en-US', {
@@ -81,12 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
         parts.forEach(p => kst[p.type] = p.value);
         const currentKst = new Date(kst.year, kst.month - 1, kst.day, kst.hour, kst.minute, kst.second);
         
-        // 4. 아직 지정된 오픈 시간 전이라면 예약 불가
-        if (currentKst < openTime) return false;
-
-        // 5. 이미 지나간 과거 날짜 예약 불가
-        const currentOnlyDate = new Date(kst.year, kst.month - 1, kst.day, 0, 0, 0);
-        if (currentOnlyDate > targetDate) return false;
+        // 4. 현재 시간이 '이용일 하루 전 19:00~23:00' 사이가 아니면 예약 불가(달력 비활성화)
+        if (currentKst < openTime || currentKst > closeTime) {
+            return false;
+        }
 
         return true; 
     }
@@ -120,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cell.addEventListener('click', () => handleDateClick(cell, dateStr));
                     } else {
                         cell.classList.add('disabled');
-                        cell.title = '아직 예약이 오픈되지 않았거나 예약 불가한 날짜(휴장일 등)입니다.';
+                        cell.title = '해당 날짜의 예약은 전날 19:00 ~ 23:00 에만 오픈됩니다.';
                     }
                     date++;
                 }
@@ -164,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             timeListContainer.innerHTML = ''; 
             
+            // ⭐️ 회차별로 잔여 인원(150명 정원) 각각 계산
             rule.slots.forEach(slot => {
                 const bookedCount = bookedMap[slot] || 0;
                 const remainCount = rule.capacity - bookedCount;
