@@ -87,6 +87,7 @@
                         </div>
                         <input type="text" id="address1" placeholder="기본주소" readonly style="width:100%; margin-bottom:5px; background:#f0f0f0;" required>
                         <input type="text" id="address2" placeholder="상세주소" style="width:100%;" required>
+                        <p style="color: #dc3545; font-size: 0.85rem; margin-top: 5px; margin-bottom: 0;">*양천구민 확인용 주소를 넣어주세요</p>
                     </div>
 
                     <div class="form-row">
@@ -136,7 +137,6 @@
         }
         loadIncludes();
 
-        // 주소 검색 API 연동
         function execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function(data) {
