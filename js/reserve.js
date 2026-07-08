@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === ⭐️ 서서울호수공원 운영 정책 설정 ===
     const RULES = {
-        "서서울호수공원": {
+        "어린이 물놀이장": { // ⭐️ HTML의 value값과 동일하게 맞춤
             start: "2026-07-21",
             end: "2026-08-23",
             closedDays: [1], // 매주 월요일(1) 휴장
             exceptions: [], 
-            capacity: 150,   // ⭐️ 각 회차별 150명 정원 (1부 150명, 2부 150명)
+            capacity: 150,   // 1부 150명, 2부 150명
             slots: [
                 "1부 (10:00~13:00)", 
                 "2부 (14:00~17:00)"
@@ -20,8 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentYear = 2026;
     let currentMonth = 7;
     
-    // 단일 장소 고정
-    let selectedLocation = "서서울호수공원";
+    let selectedLocation = "어린이 물놀이장";
 
     const calendarBody = document.getElementById('calendarBody');
     const currentMonthDisplay = document.getElementById('currentMonth');
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
     const hiddenDateInput = document.getElementById('date');
 
-    // 기본 시간표 비활성화 렌더링
     function renderDefaultTimeSlots() {
         const rule = RULES[selectedLocation];
         if (!rule) return;
@@ -49,11 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === ⭐️ 예약 오픈 스케줄 검증 로직 ===
     function isSelectable(dateStr, rule) {
         const [y, m, d] = dateStr.split('-').map(Number);
-        
-        // 예약하려는 타겟 날짜 (이용일)
         const targetDate = new Date(y, m - 1, d, 0, 0, 0);
         
         const start = new Date(rule.start);
@@ -61,11 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
         start.setHours(0, 0, 0, 0);
         end.setHours(0, 0, 0, 0);
         
-        // 1. 기본 운영기간 및 휴장일 체크
         if (targetDate < start || targetDate > end) return false;
         if (!rule.exceptions?.includes(dateStr) && rule.closedDays.includes(targetDate.getDay())) return false;
 
-        // 2. 예약 오픈 및 마감 시간 설정 (⭐️ 이용일 하루 전 19:00 ~ 22:59:59)
         const openTime = new Date(targetDate);
         openTime.setDate(openTime.getDate() - 1); 
         openTime.setHours(19, 0, 0, 0); 
@@ -74,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeTime.setDate(closeTime.getDate() - 1);
         closeTime.setHours(22, 59, 59, 999); 
 
-        // 3. 현재 한국 시간(KST) 구하기
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'Asia/Seoul',
             year: 'numeric', month: '2-digit', day: '2-digit',
@@ -85,10 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         parts.forEach(p => kst[p.type] = p.value);
         const currentKst = new Date(kst.year, kst.month - 1, kst.day, kst.hour, kst.minute, kst.second);
         
-        // 4. 현재 시간이 '이용일 하루 전 19:00~23:00' 사이가 아니면 예약 불가(달력 비활성화)
-        if (currentKst < openTime || currentKst > closeTime) {
-            return false;
-        }
+        if (currentKst < openTime || currentKst > closeTime) return false;
 
         return true; 
     }
@@ -133,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 달력 좌우 이동
     document.getElementById('prevMonth').addEventListener('click', () => {
         if (currentMonth === 1) { currentMonth = 12; currentYear--; } else { currentMonth--; }
         renderCalendar(currentYear, currentMonth);
@@ -143,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCalendar(currentYear, currentMonth);
     });
 
-    // === 잔여인원 로드 ===
     async function handleDateClick(cell, dateStr) {
         document.querySelectorAll('#calendarBody td').forEach(td => td.classList.remove('selected'));
         cell.classList.add('selected');
@@ -166,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             timeListContainer.innerHTML = ''; 
             
-            // ⭐️ 회차별로 잔여 인원(150명 정원) 각각 계산
             rule.slots.forEach(slot => {
                 const bookedCount = bookedMap[slot] || 0;
                 const remainCount = rule.capacity - bookedCount;
@@ -196,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCalendar(currentYear, currentMonth);
     renderDefaultTimeSlots();
 
-    // === 인원수 증감 및 폼 제출 ===
     const btnMinus = document.getElementById('btnMinus');
     const btnPlus = document.getElementById('btnPlus');
     const peopleInput = document.getElementById('people');
@@ -214,6 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const timeSlot = document.querySelector('input[name="timeSlot"]:checked');
             if (!timeSlot) return alert('예약 시간을 선택해주세요.');
             
+            // ==========================================
+            // ⭐️ 양천구민 주소 검증 로직
+            // ==========================================
+            const address1 = document.getElementById('address1').value;
+            if (!address1.includes('양천')) {
+                alert('죄송합니다. 서서울호수공원 물놀이장은 양천구민만 예약이 가능합니다.\n올바른 양천구 주소를 입력해 주세요.');
+                return; // 주소에 '양천'이 없으면 서버로 데이터를 보내지 않고 즉시 차단
+            }
+
             const agree = document.getElementById('privacyAgree');
             if (!agree.checked) return alert('개인정보 수집 및 이용에 동의해주세요.');
 
