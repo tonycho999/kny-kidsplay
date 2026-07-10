@@ -1,60 +1,126 @@
-<style>
-    /* ⭐️ 구글 폰트 불러오기 (귀엽고 친근한 폰트) */
-    @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
-    
-    /* 헤더 전체 배경색 (시원한 호수 블루 그라데이션) */
-    header {
-        background: linear-gradient(135deg, #0082c8, #005c97) !important;
-        border-bottom: none !important;
-        box-shadow: 0 4px 10px rgba(0, 92, 151, 0.3) !important;
-    }
-    
-    /* 메인 로고 타이틀 폰트 및 스타일 변경 */
-    header .logo a {
-        font-family: 'Jua', sans-serif !important;
-        color: #ffffff !important;
-        font-size: 1.8rem !important;
-        letter-spacing: 1px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    
-    /* 상단 메뉴 글자색 (흰색) 및 애니메이션 */
-    header #navMenu ul li a {
-        color: #f0f8ff !important;
-        font-weight: bold !important;
-        transition: all 0.3s ease;
-    }
-    
-    /* 메뉴에 마우스 올렸을 때 효과 (포인트 노란색) */
-    header #navMenu ul li a:hover {
-        color: #ffeaa7 !important; 
-        text-decoration: none;
-        transform: scale(1.05);
-    }
-    
-    /* 모바일 햄버거 버튼 색상 (흰색) */
-    header .menu-toggle {
-        color: #ffffff !important;
-    }
-    
-    /* 모바일에서 메뉴 열렸을 때 배경색 자연스럽게 */
-    @media (max-width: 768px) {
-        header #navMenu.active {
-            background-color: #006baf !important;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운영기간안내 - 성북문화바캉스</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        .info-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border: 1px solid #eef0f5;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
-    }
-</style>
+        
+        .main-title {
+            text-align: center;
+            color: #00438a;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
 
-<header>
-    <div class="logo"><a href="index.html">성북문화바캉스</a></div>
-    <button class="menu-toggle" id="menuToggle">☰</button>
-    <nav id="navMenu">
-        <ul>
-            <li><a href="period.html">운영기간안내</a></li>
-            <li><a href="guide.html">이용안내</a></li>
-            <li><a href="reserve.html">예약하기</a></li>
-            <li><a href="check.html">예약조회/취소</a></li>
-            <li><a href="location.html">오시는길</a></li>
-        </ul>
-    </nav>
-</header>
+        /* ⭐️ 그리드를 없애고 위아래 여백(gap)을 주는 flex-direction: column으로 변경 */
+        .info-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #f8fbff;
+            padding: 1.8rem;
+            border-radius: 8px;
+            border-left: 5px solid #0056b3;
+        }
+
+        .info-box h4 {
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            word-break: keep-all;
+        }
+
+        @media (max-width: 768px) {
+            .info-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="container">
+        <h2 style="text-align: center; margin-bottom: 2rem;">운영기간 안내</h2>
+
+        <div class="info-card">
+            <div class="main-title">제7회 성북문화바캉스</div>
+
+            <div class="info-layout">
+                <!-- 1. 상단: 운영 기간 -->
+                <div class="info-box">
+                    <h4>📅 운영 기간</h4>
+                    <p>
+                        <strong>2026. 7. 31.(금) ~ 8. 9.(일)</strong><br>
+                        <span style="font-size: 0.95em; color: #555;">※ 10일간 운영 (휴장일 없음)</span><br>
+                        <span style="font-size: 0.85em; color: #d9534f; margin-top: 5px; display: inline-block;">(단, 우천 등 기상 악화 시 휴장될 수 있습니다.)</span>
+                    </p>
+                </div>
+
+                <!-- 2. 하단: 운영 시간표 -->
+                <div class="info-box" style="border-left-color: #28a745; background: #f4fdf6;">
+                    <h4 style="color: #28a745;">⏰ 운영 시간 (1일 2부제)</h4>
+                    <p>
+                        <strong>[1부]</strong> 10:00 ~ 13:00<br>
+                        <strong>[정비시간]</strong> 13:00 ~ 14:00 (수질 정비 및 휴식)<br>
+                        <strong>[2부]</strong> 14:00 ~ 17:00<br>
+                        <span style="font-size: 0.85em; color: #666; display:inline-block; margin-top:5px;">※ 매시간 50분 운영 / 10분 휴식 진행</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+        async function loadIncludes() {
+            try {
+                const headerRes = await fetch('header.html');
+                document.getElementById('header-placeholder').innerHTML = await headerRes.text();
+                
+                const footerRes = await fetch('footer.html');
+                document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
+                
+                const menuToggle = document.getElementById('menuToggle');
+                const navMenu = document.getElementById('navMenu');
+                if (menuToggle && navMenu) {
+                    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+                }
+            } catch (error) { console.error("헤더/푸터 로드 실패", error); }
+        }
+        loadIncludes();
+    </script>
+</body>
+</html>
