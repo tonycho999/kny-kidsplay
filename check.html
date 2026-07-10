@@ -3,25 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약 조회 및 취소 - 서서울호수공원 어린이 물놀이장</title>
+    <title>예약 조회 및 취소 - 어린이 물놀이장</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .check-container { max-width: 500px; margin: 0 auto; }
+        body {
+            background-image: url('public/images/서서울호수공원2.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.65); 
+            z-index: -1; 
+        }
+
+        .check-container { max-width: 600px; margin: 0 auto; padding-bottom: 3rem; }
         .check-form { background: #fff; padding: 2rem; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem; }
         .check-form input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
         
-        .result-box { display: none; background: #f8f9fa; border: 1px solid #cce5ff; border-radius: 8px; padding: 2rem; text-align: left; }
-        .result-box h3 { color: #0056b3; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .result-item { margin-bottom: 10px; font-size: 1.1rem; }
-        .result-item strong { display: inline-block; width: 100px; color: #555; }
+        /* 다중 결과를 담을 컨테이너 */
+        #resultContainer { display: none; }
         
-        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.9rem; }
+        /* 개별 결과 카드 디자인 */
+        .result-card { background: #f8f9fa; border: 1px solid #cce5ff; border-radius: 8px; padding: 1.5rem; text-align: left; margin-bottom: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .result-card h4 { color: #0056b3; margin-top: 0; margin-bottom: 10px; border-bottom: 1px dashed #ccc; padding-bottom: 8px; font-size: 1.1rem; }
+        .result-item { margin-bottom: 8px; font-size: 1.05rem; }
+        .result-item strong { display: inline-block; width: 90px; color: #555; }
+        
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.85rem; }
         .status-badge.wait { background: #ffc107; }
         .status-badge.confirm { background: #28a745; }
         .status-badge.cancel { background: #6c757d; }
         
-        .cancel-btn { background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+        .cancel-btn { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-size: 0.95rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; }
         .cancel-btn:hover { background: #c82333; }
+        .cancel-btn:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -29,9 +51,9 @@
 
     <main class="container check-container">
         <br><br>
-        <h2 style="text-align: center; margin-bottom: 2rem;">예약 조회 및 취소</h2>
+        <h2 style="text-align: center; margin-bottom: 2rem; position:relative; z-index:1;">예약 조회 및 취소</h2>
         <br>
-        <br>
+        
         <form id="checkForm" class="check-form">
             <label for="searchDate"><strong>예약 날짜</strong></label>
             <input type="date" id="searchDate" required>
@@ -42,30 +64,21 @@
             <button type="submit" class="submit-btn" style="width:100%; padding:12px; margin-top:10px;">조회하기</button>
         </form>
 
-        <div id="resultBox" class="result-box">
-            <h3>조회 결과</h3>
-            <div class="result-item"><strong>장소:</strong> <span id="resLocation"></span></div>
-            <div class="result-item"><strong>예약일시:</strong> <span id="resDate"></span> / <span id="resTime"></span></div>
-            <div class="result-item"><strong>예약자명:</strong> <span id="resName"></span></div>
-            <div class="result-item"><strong>예약인원:</strong> <span id="resPeople"></span>명</div>
-            <div class="result-item" style="margin-top: 15px;">
-                <strong>현재상태:</strong> <span id="resStatus" class="status-badge"></span>
-            </div>
-            
-            <button id="cancelBtn" class="cancel-btn">이 예약 취소하기</button>
+        <!-- ⭐️ 조회 결과가 여러 개 생성될 컨테이너 -->
+        <div id="resultContainer">
+            <h3 style="text-align: center; margin-bottom: 1rem; color: #333; position:relative; z-index:1;">조회 결과</h3>
+            <div id="resultList"></div>
         </div>
-    </main>
 
+    </main>
     <div id="footer-placeholder"></div>
 
     <script src="js/main.js"></script>
-
     <script>
         async function loadIncludes() {
             try {
                 const headerRes = await fetch('header.html');
                 document.getElementById('header-placeholder').innerHTML = await headerRes.text();
-                
                 const footerRes = await fetch('footer.html');
                 document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
                 
@@ -78,18 +91,14 @@
         }
         loadIncludes();
     </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 💡 주의: 나중에 서서울호수공원 전용 Cloudflare Workers를 배포하시면 아래 주소를 꼭 새 주소로 변경해 주세요!
             const API_BASE = 'https://kny-kidsplay.tonycho999.workers.dev';
             
             const checkForm = document.getElementById('checkForm');
-            const resultBox = document.getElementById('resultBox');
-            const cancelBtn = document.getElementById('cancelBtn');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultList = document.getElementById('resultList');
             
-            let currentReservation = null;
-
             // 1. 조회하기
             checkForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -97,7 +106,7 @@
                 const searchDate = document.getElementById('searchDate').value;
                 const rawPhone = document.getElementById('searchPhone').value.trim();
                 
-                // DB 형식과 맞추기 위해 자바스크립트가 알아서 하이픈을 삽입합니다.
+                // 연락처 하이픈 자동 포맷팅
                 let formattedPhone = rawPhone;
                 if (rawPhone.length === 11) {
                     formattedPhone = rawPhone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
@@ -119,72 +128,83 @@
                     const result = await response.json();
                     
                     if (response.ok && result.success) {
-                        const data = result.data;
+                        const dataArray = result.data; // 이제 배열 형태로 응답이 옴
                         
-                        currentReservation = { reservation_code: data.reservation_code, phone: data.phone };       
+                        resultList.innerHTML = ''; // 기존 목록 초기화
                         
-                        document.getElementById('resLocation').textContent = data.location;
-                        document.getElementById('resDate').textContent = data.date;
-                        document.getElementById('resTime').textContent = data.time_slot;
-                        document.getElementById('resName').textContent = data.name;
-                        document.getElementById('resPeople').textContent = data.people;
+                        // ⭐️ 다중 결과 렌더링 루프
+                        dataArray.forEach((data, index) => {
+                            let statusClass = 'wait';
+                            if (data.status === '예약완료') statusClass = 'confirm';
+                            if (data.status === '예약취소') statusClass = 'cancel';
+
+                            const isCanceled = data.status === '예약취소';
+                            
+                            // 카드 생성
+                            const card = document.createElement('div');
+                            card.className = 'result-card';
+                            card.innerHTML = `
+                                <h4>내역 ${dataArray.length - index} (예약번호: ${data.reservation_code})</h4>
+                                <div class="result-item"><strong>장소:</strong> ${data.location}</div>
+                                <div class="result-item"><strong>예약일시:</strong> ${data.date} / ${data.time_slot}</div>
+                                <div class="result-item"><strong>예약자명:</strong> ${data.name}</div>
+                                <div class="result-item"><strong>예약인원:</strong> ${data.people}명</div>
+                                <div class="result-item" style="margin-top: 15px;">
+                                    <strong>현재상태:</strong> <span class="status-badge ${statusClass}">${data.status}</span>
+                                </div>
+                                <button class="cancel-btn" data-code="${data.reservation_code}" data-phone="${data.phone}" ${isCanceled ? 'style="display:none;"' : ''}>
+                                    이 예약 취소하기
+                                </button>
+                            `;
+                            resultList.appendChild(card);
+                        });
+
+                        // 취소 버튼 이벤트 달아주기
+                        document.querySelectorAll('.cancel-btn').forEach(btn => {
+                            btn.addEventListener('click', async function() {
+                                const rCode = this.getAttribute('data-code');
+                                const rPhone = this.getAttribute('data-phone');
+                                
+                                if (!confirm('정말로 이 예약을 취소하시겠습니까?\n취소 후에는 복구할 수 없습니다.')) return;
+                                
+                                this.textContent = '취소 처리 중...';
+                                this.disabled = true;
+
+                                try {
+                                    const cancelRes = await fetch(`${API_BASE}/api/cancel-reservation`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ reservation_code: rCode, phone: rPhone })
+                                    });
+                                    
+                                    const cancelResult = await cancelRes.json();
+                                    
+                                    if (cancelRes.ok && cancelResult.success) {
+                                        alert('예약이 정상적으로 취소되었습니다.');
+                                        checkForm.dispatchEvent(new Event('submit')); // 취소 성공 시 자동 재조회
+                                    } else {
+                                        alert(cancelResult.message || '취소 실패');
+                                        this.textContent = '이 예약 취소하기';
+                                        this.disabled = false;
+                                    }
+                                } catch (error) {
+                                    alert('서버 오류가 발생했습니다.');
+                                    this.textContent = '이 예약 취소하기';
+                                    this.disabled = false;
+                                }
+                            });
+                        });
                         
-                        const statusEl = document.getElementById('resStatus');
-                        statusEl.textContent = data.status;
-                        statusEl.className = 'status-badge'; 
-                        
-                        if (data.status === '예약완료') statusEl.classList.add('confirm');
-                        else if (data.status === '예약취소') statusEl.classList.add('cancel');
-                        else statusEl.classList.add('wait'); 
-                        
-                        if (data.status === '예약취소') {
-                            cancelBtn.style.display = 'none';
-                        } else {
-                            cancelBtn.style.display = 'block';
-                        }
-                        
-                        resultBox.style.display = 'block';
+                        resultContainer.style.display = 'block';
                     } else {
                         alert(result.message || '조회 실패');
-                        resultBox.style.display = 'none';
+                        resultContainer.style.display = 'none';
                     }
                 } catch (error) {
                     alert('서버 오류가 발생했습니다.');
                 } finally {
                     submitBtn.textContent = '조회하기';
                     submitBtn.disabled = false;
-                }
-            });
-
-            // 2. 취소하기
-            cancelBtn.addEventListener('click', async () => {
-                if (!currentReservation) return;
-                
-                if (!confirm('정말로 이 예약을 취소하시겠습니까?\n취소 후에는 복구할 수 없습니다.')) return;
-                
-                cancelBtn.textContent = '취소 처리 중...';
-                cancelBtn.disabled = true;
-
-                try {
-                    const response = await fetch(`${API_BASE}/api/cancel-reservation`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(currentReservation)
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok && result.success) {
-                        alert('예약이 정상적으로 취소되었습니다.');
-                        location.reload(); 
-                    } else {
-                        alert(result.message || '취소 실패');
-                    }
-                } catch (error) {
-                    alert('서버 오류가 발생했습니다.');
-                } finally {
-                    cancelBtn.textContent = '이 예약 취소하기';
-                    cancelBtn.disabled = false;
                 }
             });
         });
