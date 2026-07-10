@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const API_BASE = 'https://kny-summerdb.tonycho999.workers.dev';
+    const API_BASE = 'https://kny-kidsplay.tonycho999.workers.dev';
 
     let currentYear = 2026;
     let currentMonth = 7;
