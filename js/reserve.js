@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const stepDesc = document.querySelector('.calendar-table').nextElementSibling;
         if (stepDesc) {
-            stepDesc.innerHTML = `원하시는 날짜를 선택하세요.<br><span style="color:#0056b3; font-weight:bold; font-size:0.9em;">(⏰ 예약 오픈: 이용 전날 20:00 ~ 자정까지)</span>`;
+            stepDesc.innerHTML = `원하시는 날짜를 선택하세요.<br><span style="color:#0056b3; font-weight:bold; font-size:0.9em;">(⏰ 예약 오픈: 이용 전날 19:00부터)</span>`;
         }
         
         const firstDay = new Date(year, month - 1, 1).getDay();
