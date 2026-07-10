@@ -6,11 +6,10 @@
     <title>관리자 - 예약 관리</title>
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        /* 검색 영역 스타일 간단 추가 */
         .search-area {
             margin: 1.5rem 0;
             display: flex;
-            flex-wrap: wrap; /* 여러 줄 허용 */
+            flex-wrap: wrap; 
             gap: 10px;
             justify-content: flex-end;
             align-items: center;
@@ -28,26 +27,26 @@
 </head>
 <body>
     <header class="admin-header">
-        <h1>⚙️ 성북구 관리자 예약 관리 시스템</h1>
+        <h1>⚙️ 성북문화바캉스 예약 관리 시스템</h1>
         <a href="../index.html" class="home-btn">홈페이지로 돌아가기</a>
     </header>
-
     <main class="admin-container">
         <h2>예약 내역 리스트</h2>
         
         <div class="search-area">
             <select id="filterLocation">
-                <option value="">서구청</option>
+                <!-- ⭐️ 옵션을 성북문화바캉스로 수정 -->
+                <option value="">모든 장소</option>
+                <option value="성북문화바캉스">성북문화바캉스</option>
             </select>
-
             <input type="date" id="filterDate">
             
             <select id="filterTime">
+                <!-- ⭐️ 슬롯명 수정 -->
                 <option value="">모든 회차</option>
-                <option value="1회차">1회차</option>
-                <option value="2회차">2회차</option>
+                <option value="1부">1부 (10:00~13:00)</option>
+                <option value="2부">2부 (14:00~17:00)</option>
             </select>
-
             <input type="text" id="searchInput" placeholder="이름, 연락처 또는 예약번호 검색" style="width:250px;">
         </div>
 
@@ -67,7 +66,6 @@
             </tbody>
         </table>
     </main>
-
     <script src="../js/admin.js"></script>
 </body>
 </html>
