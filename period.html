@@ -20,27 +20,19 @@
             color: #00438a;
             font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
-        }
-        
-        .sub-title {
-            text-align: center;
-            color: #666;
-            font-size: 1.1rem;
             margin-bottom: 2rem;
+            letter-spacing: -1px;
         }
 
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-bottom: 2rem;
         }
 
         .info-box {
             background: #f8fbff;
-            padding: 1.5rem;
+            padding: 1.8rem;
             border-radius: 8px;
             border-left: 5px solid #0056b3;
         }
@@ -48,8 +40,8 @@
         .info-box h4 {
             color: #0056b3;
             margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -58,17 +50,12 @@
         .info-box p {
             margin: 0;
             color: #333;
-            font-size: 1.05rem;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            line-height: 1.8;
             word-break: keep-all;
         }
 
-        .highlight-text {
-            color: #d9534f;
-            font-weight: bold;
-        }
-
-        /* ⭐️ 모바일 반응형 (가로로 두 칸이던 걸 세로 한 칸으로) */
+        /* 모바일 반응형 (가로로 두 칸이던 걸 세로 한 칸으로) */
         @media (max-width: 768px) {
             .info-grid {
                 grid-template-columns: 1fr;
@@ -83,46 +70,28 @@
     <div id="header-placeholder"></div>
 
     <main class="container">
-        <h2 style="text-align: center; margin-bottom: 2rem;">운영 안내</h2>
+        <h2 style="text-align: center; margin-bottom: 2rem;">운영기간 안내</h2>
 
         <div class="info-card">
             <div class="main-title">제7회 성북문화바캉스</div>
-            <div class="sub-title">도심 속에서 즐기는 신나는 물놀이!</div>
 
             <div class="info-grid">
-                <!-- 1. 일시 -->
+                <!-- 1. 운영 기간 -->
                 <div class="info-box">
-                    <h4>📅 일 시</h4>
+                    <h4>📅 운영 기간</h4>
                     <p>
                         <strong>2026. 7. 31.(금) ~ 8. 9.(일)</strong><br>
-                        <span style="font-size: 0.95em; color: #555;">※ 10일간 운영 (휴장일 없음)</span>
+                        <span style="font-size: 0.95em; color: #555;">※ 10일간 운영 (휴장일 없음)</span><br>
+                        <span style="font-size: 0.85em; color: #d9534f; margin-top: 5px; display: inline-block;">(단, 우천 등 기상 악화 시 휴장될 수 있습니다.)</span>
                     </p>
                 </div>
 
-                <!-- 2. 장소 -->
-                <div class="info-box">
-                    <h4>📍 장 소</h4>
-                    <p>
-                        <strong>길음동 유휴부지</strong><br>
-                        <span style="font-size: 0.95em; color: #555;">(길음 복합문화체육센터 건립 부지)</span>
-                    </p>
-                </div>
-
-                <!-- 3. 대상 및 요금 -->
-                <div class="info-box">
-                    <h4>👨‍👩‍👧‍👦 대 상 및 요 금</h4>
-                    <p>
-                        <strong>어린이 및 동반가족</strong><br>
-                        <span class="highlight-text">전석 무료 입장</span>
-                    </p>
-                </div>
-
-                <!-- 4. 운영 시간표 -->
+                <!-- 2. 운영 시간표 -->
                 <div class="info-box" style="border-left-color: #28a745; background: #f4fdf6;">
                     <h4 style="color: #28a745;">⏰ 운영 시간 (1일 2부제)</h4>
                     <p>
                         <strong>[1부]</strong> 10:00 ~ 13:00<br>
-                        <strong>[휴식 및 수질정비]</strong> 13:00 ~ 14:00<br>
+                        <strong>[정비시간]</strong> 13:00 ~ 14:00 (수질 정비 및 휴식)<br>
                         <strong>[2부]</strong> 14:00 ~ 17:00<br>
                         <span style="font-size: 0.85em; color: #666; display:inline-block; margin-top:5px;">※ 매시간 50분 운영 / 10분 휴식 진행</span>
                     </p>
