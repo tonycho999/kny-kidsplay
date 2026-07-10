@@ -13,6 +13,9 @@
             margin-bottom: 2rem;
             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
             border: 1px solid #eef0f5;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .main-title {
@@ -24,9 +27,10 @@
             letter-spacing: -1px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* ⭐️ 그리드를 없애고 위아래 여백(gap)을 주는 flex-direction: column으로 변경 */
+        .info-layout {
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
@@ -55,11 +59,7 @@
             word-break: keep-all;
         }
 
-        /* 모바일 반응형 (가로로 두 칸이던 걸 세로 한 칸으로) */
         @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
             .info-card {
                 padding: 1.5rem;
             }
@@ -75,8 +75,8 @@
         <div class="info-card">
             <div class="main-title">제7회 성북문화바캉스</div>
 
-            <div class="info-grid">
-                <!-- 1. 운영 기간 -->
+            <div class="info-layout">
+                <!-- 1. 상단: 운영 기간 -->
                 <div class="info-box">
                     <h4>📅 운영 기간</h4>
                     <p>
@@ -86,7 +86,7 @@
                     </p>
                 </div>
 
-                <!-- 2. 운영 시간표 -->
+                <!-- 2. 하단: 운영 시간표 -->
                 <div class="info-box" style="border-left-color: #28a745; background: #f4fdf6;">
                     <h4 style="color: #28a745;">⏰ 운영 시간 (1일 2부제)</h4>
                     <p>
