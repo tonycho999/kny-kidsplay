@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // === ⭐️ 서서울호수공원 운영 정책 설정 ===
+    // === ⭐️ 성북문화바캉스 운영 정책 설정 ===
     const RULES = {
-        "어린이 물놀이장": { // ⭐️ HTML의 value값과 동일하게 맞춤
-            start: "2026-07-21",
-            end: "2026-08-23",
-            closedDays: [1], // 매주 월요일(1) 휴장
+        "성북문화바캉스": {
+            start: "2026-07-31",
+            end: "2026-08-09",
+            closedDays: [], // 휴장일 없음
             exceptions: [], 
-            capacity: 150,   // 1부 150명, 2부 150명
+            capacity: 200,   // 정원 설정 (필요시 변경)
             slots: [
                 "1부 (10:00~13:00)", 
                 "2부 (14:00~17:00)"
@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentYear = 2026;
     let currentMonth = 7;
     
-    let selectedLocation = "어린이 물놀이장";
+    // 단일 장소 고정
+    let selectedLocation = "성북문화바캉스";
 
     const calendarBody = document.getElementById('calendarBody');
     const currentMonthDisplay = document.getElementById('currentMonth');
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // === 주차별 예약 오픈 스케줄 반영 로직 ===
     function isSelectable(dateStr, rule) {
         const [y, m, d] = dateStr.split('-').map(Number);
         const targetDate = new Date(y, m - 1, d, 0, 0, 0);
@@ -59,13 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetDate < start || targetDate > end) return false;
         if (!rule.exceptions?.includes(dateStr) && rule.closedDays.includes(targetDate.getDay())) return false;
 
+        // 예약 오픈 시간 설정 (하루 전 20:00)
         const openTime = new Date(targetDate);
         openTime.setDate(openTime.getDate() - 1); 
-        openTime.setHours(19, 0, 0, 0); 
+        openTime.setHours(20, 0, 0, 0);           
         
+        // 예약 마감 시간 설정 (당일 00:00)
         const closeTime = new Date(targetDate);
-        closeTime.setDate(closeTime.getDate() - 1);
-        closeTime.setHours(22, 59, 59, 999); 
+        closeTime.setHours(0, 0, 0, 0);
 
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'Asia/Seoul',
@@ -77,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
         parts.forEach(p => kst[p.type] = p.value);
         const currentKst = new Date(kst.year, kst.month - 1, kst.day, kst.hour, kst.minute, kst.second);
         
-        if (currentKst < openTime || currentKst > closeTime) return false;
+        if (currentKst < openTime || currentKst >= closeTime) return false;
+
+        const currentOnlyDate = new Date(kst.year, kst.month - 1, kst.day, 0, 0, 0);
+        if (currentOnlyDate > targetDate) return false;
 
         return true; 
     }
@@ -88,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const stepDesc = document.querySelector('.calendar-table').nextElementSibling;
         if (stepDesc) {
-            stepDesc.innerHTML = `원하시는 날짜를 선택하세요.<br><span style="color:#0056b3; font-weight:bold; font-size:0.9em;">(⏰ 예약 오픈: 이용 전날 19:00 ~ 23:00)</span>`;
+            stepDesc.innerHTML = `원하시는 날짜를 선택하세요.<br><span style="color:#0056b3; font-weight:bold; font-size:0.9em;">(⏰ 예약 오픈: 이용 전날 20:00 ~ 자정까지)</span>`;
         }
         
         const firstDay = new Date(year, month - 1, 1).getDay();
@@ -111,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cell.addEventListener('click', () => handleDateClick(cell, dateStr));
                     } else {
                         cell.classList.add('disabled');
-                        cell.title = '해당 날짜의 예약은 전날 19:00 ~ 23:00 에만 오픈됩니다.';
+                        cell.title = '아직 예약이 오픈되지 않았거나 예약 불가한 날짜입니다.\n(오픈 시간: 이용 전날 20:00 ~ 자정까지)';
                     }
                     date++;
                 }
@@ -185,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnMinus = document.getElementById('btnMinus');
     const btnPlus = document.getElementById('btnPlus');
     const peopleInput = document.getElementById('people');
+
     if(btnMinus && btnPlus) {
         btnMinus.addEventListener('click', () => { let val = parseInt(peopleInput.value); if (val > 1) peopleInput.value = val - 1; });
         btnPlus.addEventListener('click', () => { let val = parseInt(peopleInput.value); if (val < 5) peopleInput.value = val + 1; });
@@ -200,12 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!timeSlot) return alert('예약 시간을 선택해주세요.');
             
             // ==========================================
-            // ⭐️ 양천구민 주소 검증 로직
+            // ⭐️ 성북구민 주소 검증 로직으로 수정
             // ==========================================
             const address1 = document.getElementById('address1').value;
-            if (!address1.includes('양천')) {
-                alert('죄송합니다. 서서울호수공원 물놀이장은 양천구민만 예약이 가능합니다.\n올바른 양천구 주소를 입력해 주세요.');
-                return; // 주소에 '양천'이 없으면 서버로 데이터를 보내지 않고 즉시 차단
+            if (!address1.includes('성북')) {
+                alert('죄송합니다. 성북문화바캉스는 성북구민만 예약이 가능합니다.\n올바른 성북구 주소를 입력해 주세요.');
+                return;
             }
 
             const agree = document.getElementById('privacyAgree');
@@ -260,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
                     formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
                 } else {
                     alert(`예약 처리 중 오류가 발생했습니다: \n${result.message || result.error || '알 수 없는 오류'}`);
                     submitBtn.textContent = '예약 신청하기';
