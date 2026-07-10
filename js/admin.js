@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const filterTime = document.getElementById('filterTime');
     
     // ⭐️ 새 서버 주소 적용
-    const GET_URL = 'https://kny-summerdb.tonycho999.workers.dev/api/reservations';
-    const UPDATE_URL = 'https://kny-summerdb.tonycho999.workers.dev/api/update-status';
+    const GET_URL = 'https://kny-kidsplay.tonycho999.workers.dev/api/reservations';
+    const UPDATE_URL = 'https://kny-kidsplay.tonycho999.workers.dev/api/update-status';
 
     let allReservations = []; 
 
