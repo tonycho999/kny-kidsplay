@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>이용안내 - 서서울호수공원 어린이 물놀이장</title>
+    <title>이용안내 - 성북문화바캉스</title>
     <link rel="stylesheet" href="css/style.css?v=2">
     <style>
         .guide-card {
@@ -39,6 +39,17 @@
             color: #d9534f;
             font-weight: bold;
         }
+        
+        /* ⭐️ 입장료 안내 강조 박스 스타일 */
+        .fee-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -49,11 +60,19 @@
 
         <div class="guide-card">
             <h3>✅ 예약 및 입장 안내</h3>
+            
+            <!-- ⭐️ 추가된 입장료 안내 박스 -->
+            <div class="fee-box">
+                <strong>[입장료 안내]</strong><br>
+                ▪ <span class="highlight">성북구민 증빙서류 지참 시 : <strong>입장료 무료</strong></span><br>
+                ▪ 타지역 주민 : <strong>1인당 2,000원</strong> (카드 결제만 가능)<br>
+                ▪ 영유아 (36개월 미만) : 거주지 무관 무료 입장
+            </div>
+
             <ul class="guide-list">
-                <li>본 물놀이장은 사전 예약제로 운영되며, 현장 접수(200명)도 함께 병행합니다.</li>
-                <li><span class="highlight-red">단체 예약은 불가하며, 개인 예약만 가능합니다.</span> <br> 
-                    <span style="font-size: 0.95rem; color: #666;">※ 어린이집 등 10명 이상 단체예약은 02-2620-4514(양천구청 체육과)에 문의 바랍니다.</span></li>
-                <li>입장은 예약하신 1부/2부 시작 10분 전부터 가능하며, 본인 확인을 위해 신분증 또는 예약 완료 화면을 제시해 주시기 바랍니다.</li>
+                <li>본 물놀이장은 사전 예약제로 운영되며, 현장 접수도 함께 병행합니다.</li>
+                <li><span class="highlight-red">단체 예약은 불가하며, 개인 예약만 가능합니다.</span></li>
+                <li>입장은 예약하신 1부/2부 시작 전부터 대기 및 본인 확인 후 가능하며, 예약 완료 화면을 제시해 주시기 바랍니다.</li>
                 <li>노쇼(No-Show) 발생 시 다음 예약에 불이익이 발생할 수 있습니다. 방문이 어려우실 경우 반드시 사전에 취소해 주세요.</li>
             </ul>
         </div>
@@ -63,16 +82,16 @@
             <ul class="guide-list">
                 <li>안전하고 청결한 수질 관리를 위해 <span class="highlight">수영복, 수영모(캡모자 가능), 아쿠아슈즈</span>를 반드시 착용해 주세요.</li>
                 <li><span class="highlight-red">36개월 미만 영유아는 방수 기저귀 필수 착용</span> 바랍니다.</li>
-                <li>12세 이하 어린이는 사고 예방을 위해 반드시 보호자가 동반하여 입장 및 이용해야 합니다.</li>
-                <li>공원 이용 수칙 상 <span class="highlight-red">배달 및 취사가 금지</span>되며, 매점은 운영하지 않습니다. (도시락 등 간단한 음식은 휴게 공간에서만 섭취 가능)</li>
-                <li>공원 내 <span class="highlight-red">음주 및 흡연은 절대 불가</span>합니다.</li>
+                <li>어린이는 사고 예방을 위해 반드시 보호자가 동반하여 입장 및 이용해야 합니다.</li>
+                <li>행사장 내 <span class="highlight-red">배달 및 취사가 금지</span>됩니다. (간단한 간식 및 도시락은 휴게 공간에서만 섭취 가능)</li>
+                <li>행사장 내 <span class="highlight-red">음주 및 흡연은 절대 불가</span>합니다.</li>
                 <li>반려동물 출입 및 자전거, 킥보드, 인라인스케이트 등의 진입은 불가합니다.</li>
                 <li>안전요원의 통제에 적극 협조해 주시기 바라며, 지시 불응 시 퇴장 조치될 수 있습니다.</li>
                 <li>발생한 쓰레기는 반드시 분리수거 및 되가져가 주시기 바랍니다.</li>
             </ul>
         </div>
     </main>
-    
+
     <div id="footer-placeholder"></div>
 
     <script src="js/main.js"></script>
