@@ -3,9 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>어린이 물놀이장</title>
+    <title>예약하기 - 성북문화바캉스</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+        body {
+            background-image: url('public/images/성북문화바캉스.png'); /* 배경 이미지 확인 필요 */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.85); /* 글씨가 잘 보이도록 배경을 좀 더 하얗게 처리 */
+            z-index: -1; 
+        }
+    </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
@@ -15,8 +33,9 @@
         
         <div class="location-tabs" style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
             <label class="tab-label" style="padding:10px 20px; border:2px solid #0056b3; border-radius:5px; font-weight:bold; background-color: #f8f9fa;">
-                <input type="radio" name="locationSelect" value="성북구 어린이 물놀이장" checked style="display:none;">
-                <span class="tab-text" style="color:#0056b3;">📍 성북구 어린이 물놀이장</span>
+                <!-- ⭐️ value 값을 '성북문화바캉스'로 통일 -->
+                <input type="radio" name="locationSelect" value="성북문화바캉스" checked style="display:none;">
+                <span class="tab-text" style="color:#0056b3;">📍 성북문화바캉스 (길음동 유휴부지)</span>
             </label>
         </div>
         
@@ -87,7 +106,8 @@
                         </div>
                         <input type="text" id="address1" placeholder="기본주소" readonly style="width:100%; margin-bottom:5px; background:#f0f0f0;" required>
                         <input type="text" id="address2" placeholder="상세주소" style="width:100%;" required>
-                        <p style="color: #dc3545; font-size: 0.85rem; margin-top: 5px; margin-bottom: 0;">*양천구민 확인용 주소를 넣어주세요</p>
+                        <!-- 성북구민 안내로 변경 -->
+                        <p style="color: #dc3545; font-size: 0.85rem; margin-top: 5px; margin-bottom: 0;">*성북구민 증빙 및 확인용 주소를 넣어주세요</p>
                     </div>
 
                     <div class="form-row">
@@ -118,7 +138,6 @@
 
     <script src="js/main.js"></script>
     <script src="js/reserve.js"></script>
-
     <script>
         async function loadIncludes() {
             try {
