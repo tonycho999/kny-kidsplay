@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 - 예약 관리</title>
+    <title>2026 성북 물놀이축제 관리자 - 예약 관리</title>
     <link rel="stylesheet" href="../css/admin.css">
     <style>
         .search-area {
@@ -23,11 +23,32 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
+        /* ⭐️ 새로 추가된 요약(Summary) 박스 스타일 */
+        .summary-box {
+            display: flex;
+            gap: 20px;
+            background: #eef2f5;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 5px solid #0056b3;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-item span.label { font-weight: bold; color: #555; }
+        .summary-item span.value { font-weight: 800; font-size: 1.3rem; }
+        .summary-item.total .value { color: #0056b3; }    /* 확정 인원 파란색 */
+        .summary-item.cancel .value { color: #d9534f; }   /* 취소 인원 빨간색 */
     </style>
 </head>
 <body>
     <header class="admin-header">
-        <h1>⚙️ 성북문화바캉스 예약 관리 시스템</h1>
+        <h1>⚙️ 2026 성북 물놀이축제 예약 관리 시스템</h1>
         <a href="../index.html" class="home-btn">홈페이지로 돌아가기</a>
     </header>
     <main class="admin-container">
@@ -35,19 +56,29 @@
         
         <div class="search-area">
             <select id="filterLocation">
-                <!-- ⭐️ 옵션을 성북문화바캉스로 수정 -->
                 <option value="">모든 장소</option>
                 <option value="성북문화바캉스">성북문화바캉스</option>
             </select>
             <input type="date" id="filterDate">
             
             <select id="filterTime">
-                <!-- ⭐️ 슬롯명 수정 -->
                 <option value="">모든 회차</option>
                 <option value="1부">1부 (10:00~13:00)</option>
                 <option value="2부">2부 (14:00~17:00)</option>
             </select>
             <input type="text" id="searchInput" placeholder="이름, 연락처 또는 예약번호 검색" style="width:250px;">
+        </div>
+
+        <!-- ⭐️ 예약 인원 실시간 요약 박스 -->
+        <div class="summary-box">
+            <div class="summary-item total">
+                <span class="label">✅ 확정 예약 인원 (취소 제외) :</span>
+                <span class="value" id="totalBookedCount">0</span>명
+            </div>
+            <div class="summary-item cancel">
+                <span class="label">❌ 취소된 인원 :</span>
+                <span class="value" id="totalCanceledCount">0</span>명
+            </div>
         </div>
 
         <table class="admin-table">
