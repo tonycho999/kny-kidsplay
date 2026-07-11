@@ -1,13 +1,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
+
     const reservationList = document.getElementById('reservationList');
     
+    // ⭐️ 요약 박스 엘리먼트 가져오기
+    const totalBookedEl = document.getElementById('totalBookedCount');
+    const totalCanceledEl = document.getElementById('totalCanceledCount');
+
     // 필터 엘리먼트들
     const searchInput = document.getElementById('searchInput');
     const filterLocation = document.getElementById('filterLocation');
     const filterDate = document.getElementById('filterDate');
     const filterTime = document.getElementById('filterTime');
     
-    // ⭐️ 새 서버 주소 적용
+    // API 서버 주소
     const GET_URL = 'https://kny-kidsplay.tonycho999.workers.dev/api/reservations';
     const UPDATE_URL = 'https://kny-kidsplay.tonycho999.workers.dev/api/update-status';
 
@@ -26,18 +31,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderTable(dataToRender) {
         reservationList.innerHTML = ''; 
 
+        // ⭐️ 1. 화면 렌더링 시 인원 합산용 변수 초기화
+        let sumBooked = 0;
+        let sumCanceled = 0;
+
         if (dataToRender.length === 0) {
             reservationList.innerHTML = '<tr><td colspan="6">일치하는 예약 내역이 없습니다.</td></tr>';
+            if(totalBookedEl) totalBookedEl.textContent = '0';
+            if(totalCanceledEl) totalCanceledEl.textContent = '0';
             return;
         }
 
         dataToRender.forEach(item => {
-            const row = document.createElement('tr');
             const currentStatus = item.status || '예약대기';
+            
+            // ⭐️ 2. 상태별로 인원수 합산
+            const peopleCount = parseInt(item.people) || 0;
+            if (currentStatus === '예약취소') {
+                sumCanceled += peopleCount;
+            } else {
+                sumBooked += peopleCount;
+            }
+
+            const row = document.createElement('tr');
 
             // 단일 장소로 뱃지 통일
             const locationBadge = `<span style="background:#0056b3; color:white; padding:3px 6px; border-radius:3px; font-size:0.8em; margin-bottom:5px; display:inline-block; font-weight:bold;">${item.location}</span><br>`;
-
             const dateTimeStr = `${locationBadge}<strong>${item.date}</strong><br><span style="font-size:0.85em; color:#666;">${item.time_slot}</span>`;
             const userInfoStr = `<strong>${item.name}</strong> (${item.phone})<br><span style="font-size:0.85em; color:#666;">${item.email} / ${item.birthdate}</span>`;
 
@@ -57,6 +76,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             reservationList.appendChild(row);
         });
+
+        // ⭐️ 3. 합산된 결과를 요약 박스에 반영
+        if(totalBookedEl) totalBookedEl.textContent = sumBooked;
+        if(totalCanceledEl) totalCanceledEl.textContent = sumCanceled;
+
         attachSelectListeners();
     }
 
@@ -77,8 +101,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const itemToUpdate = allReservations.find(item => item.id == reservationId);
                         if (itemToUpdate) itemToUpdate.status = newStatus;
                         
-                        e.target.style.cssText = getStatusStyle(newStatus);
-                        alert('상태가 변경되었습니다.');
+                        // ⭐️ 상태 변경 시 전체 화면을 재렌더링하여 인원 요약 박스도 즉시 갱신
+                        applyFilters();
+                        
+                        // alert('상태가 변경되었습니다.'); // 번거로우면 주석 처리 가능
                     } else {
                         alert('상태 변경에 실패했습니다.');
                         location.reload(); 
@@ -109,6 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             return matchKeyword && matchLoc && matchDate && matchTime;
         });
+
         renderTable(filteredData);
     }
 
