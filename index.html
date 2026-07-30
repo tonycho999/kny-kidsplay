@@ -14,27 +14,123 @@
             text-align: center;
         }
 
-        /* ⭐️ 1장의 이미지를 중앙에 예쁘게 배치하는 스타일 */
         .single-image-wrapper {
             width: 100%;
-            max-width: 1200px; /* 전체 가로 최대 폭 */
-            margin: 0 auto 3rem auto; /* 상하 마진 및 좌우 완벽 중앙 정렬 */
-            padding: 0 15px; /* 모바일 좌우 여백 */
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            padding: 0 15px;
             box-sizing: border-box;
             text-align: center;
         }
 
         .single-image-wrapper img {
-            width: 100%; /* 화면 폭에 맞춰 꽉 차게 */
-            max-height: 800px; /* 너무 길어지는 것 방지 */
-            object-fit: contain; /* 이미지가 잘리지 않고 원본 비율 유지 */
+            width: 100%;
+            max-height: 800px;
+            object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
         }
 
         .single-image-wrapper img:hover {
-            transform: scale(1.02); /* 마우스 올렸을 때 살짝 커지는 효과 */
+            transform: scale(1.02);
+        }
+
+        /* =========================================
+           ⭐️ 팝업 스타일 추가 
+           ========================================= */
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+
+        .popup-content {
+            background: #fff;
+            padding: 30px 25px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .popup-title {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .popup-desc {
+            line-height: 1.6;
+            color: #444;
+            font-size: 1rem;
+            margin-bottom: 25px;
+            word-break: keep-all;
+        }
+
+        .popup-desc .highlight {
+            color: #0056b3;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .btn-go-reserve {
+            display: block;
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+
+        .btn-go-reserve:hover {
+            background: #004494;
+        }
+
+        .popup-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .popup-footer label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-close-popup {
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 5px 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -45,7 +141,6 @@
         <h1 style="text-align: center; margin-top: 2rem;">환영합니다!</h1>
         <p class="intro-text">2026 성북 물놀이 축제 상단 메뉴를 통해 예약을 진행해 주세요.</p>
         
-        <!-- ⭐️ 이미지가 들어갈 공간 -->
         <div class="single-image-wrapper">
             <img src="public/images/1000019926.jpg" alt="성북문화바캉스 포스터">
         </div>
@@ -53,19 +148,42 @@
 
     <div id="footer-placeholder"></div>
 
+    <!-- =========================================
+         ⭐️ 예약 안내 팝업 HTML 
+         ========================================= -->
+    <div id="noticePopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <h2 class="popup-title">📢 예약 오픈 시간 안내</h2>
+            <p class="popup-desc">
+                성북문화바캉스 물놀이장 예약은<br>
+                <span class="highlight">이용 전날 19:00 ~ 당일 07:00</span><br>
+                까지만 가능합니다.<br><br>
+                <span style="font-size: 0.85em; color: #777;">원활한 이용을 위해 예약 시간을 꼭 확인해 주세요!</span>
+            </p>
+            
+            <!-- 예약 페이지 경로(href)는 실제 예약 페이지 파일명에 맞게 수정해주세요 -->
+            <a href="reservation.html" class="btn-go-reserve">예약 바로가기</a>
+            
+            <div class="popup-footer">
+                <label>
+                    <input type="checkbox" id="chkHideToday"> 오늘 하루 보지 않기
+                </label>
+                <button type="button" class="btn-close-popup" onclick="closePopup()">닫기</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
+        // 기존 헤더/푸터 로드 함수
         async function loadIncludes() {
             try {
-                // 헤더 불러오기
                 const headerRes = await fetch('header.html');
                 document.getElementById('header-placeholder').innerHTML = await headerRes.text();
                 
-                // 푸터 불러오기
                 const footerRes = await fetch('footer.html');
                 document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
                 
-                // 모바일 메뉴 토글 이벤트 바인딩
                 const menuToggle = document.getElementById('menuToggle');
                 const navMenu = document.getElementById('navMenu');
                 if (menuToggle && navMenu) {
@@ -79,6 +197,34 @@
         }
         
         loadIncludes();
+
+        // =========================================
+        // ⭐️ 팝업 제어 자바스크립트
+        // =========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('noticePopup');
+            const chkHideToday = document.getElementById('chkHideToday');
+            
+            // 로컬 스토리지에서 '오늘 하루 보지 않기' 저장 날짜 확인
+            const hideDate = localStorage.getItem('hideNoticePopupDate');
+            
+            // 한국 시간 기준 현재 날짜 (YYYY-MM-DD 포맷)
+            const today = new Date().toLocaleDateString('ko-KR');
+
+            // 저장된 날짜가 오늘과 다르면 팝업 표시
+            if (hideDate !== today) {
+                popup.style.display = 'flex';
+            }
+
+            // 닫기 버튼 동작 함수 (전역 함수로 등록)
+            window.closePopup = function() {
+                if (chkHideToday.checked) {
+                    // 체크박스에 체크되어 있으면 오늘 날짜를 로컬 스토리지에 저장
+                    localStorage.setItem('hideNoticePopupDate', today);
+                }
+                popup.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
