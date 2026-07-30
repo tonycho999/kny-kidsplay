@@ -209,11 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // ==========================================
             // ⭐️ 성북구민 주소 검증 로직으로 수정
             // ==========================================
-            const address1 = document.getElementById('address1').value;
-            if (!address1.includes('성북')) {
-                alert('죄송합니다. 성북문화바캉스는 성북구민만 예약이 가능합니다.\n올바른 성북구 주소를 입력해 주세요.');
-                return;
-            }
+            // const address1 = document.getElementById('address1').value;
+            //if (!address1.includes('성북')) {
+            //    alert('죄송합니다. 성북문화바캉스는 성북구민만 예약이 가능합니다.\n올바른 성북구 주소를 입력해 주세요.');
+            //    return;
+            // }
 
             const agree = document.getElementById('privacyAgree');
             if (!agree.checked) return alert('개인정보 수집 및 이용에 동의해주세요.');
