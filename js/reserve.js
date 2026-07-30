@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 예약 오픈 시간 설정 (하루 전 20:00)
         const openTime = new Date(targetDate);
         openTime.setDate(openTime.getDate() - 1); 
-        openTime.setHours(20, 0, 0, 0);           
+        openTime.setHours(19, 0, 0, 0);           
         
         // 예약 마감 시간 설정 (당일 00:00)
         const closeTime = new Date(targetDate);
