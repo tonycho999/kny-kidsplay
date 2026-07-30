@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 예약 마감 시간 설정 (당일 00:00)
         const closeTime = new Date(targetDate);
-        closeTime.setHours(0, 0, 0, 0);
+        closeTime.setHours(7, 0, 0, 0);
 
         const formatter = new Intl.DateTimeFormat('en-US', {
             timeZone: 'Asia/Seoul',
