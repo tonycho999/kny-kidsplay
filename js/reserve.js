@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cell.addEventListener('click', () => handleDateClick(cell, dateStr));
                     } else {
                         cell.classList.add('disabled');
-                        cell.title = '아직 예약이 오픈되지 않았거나 예약 불가한 날짜입니다.\n(오픈 시간: 이용 전날 20:00 ~ 자정까지)';
+                        cell.title = '아직 예약이 오픈되지 않았거나 예약 불가한 날짜입니다.\n(오픈 시간: 이용 전날 19:00 ~ 자정까지)';
                     }
                     date++;
                 }
