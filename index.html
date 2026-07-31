@@ -13,43 +13,59 @@
             color: #555;
             text-align: center;
         }
-
-        .single-image-wrapper {
+        
+        /* ⭐️ 4구역 갤러리 스타일 (신규 추가) */
+        .gallery-wrapper {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto 3rem auto;
             padding: 0 15px;
             box-sizing: border-box;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-
-        .single-image-wrapper img {
+        .grid-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
             width: 100%;
-            max-height: 800px;
-            object-fit: contain;
+        }
+        .grid-row-2 img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
         }
-
-        .single-image-wrapper img:hover {
+        .grid-row-2 img:hover {
             transform: scale(1.02);
+            z-index: 1;
+        }
+
+        /* 반응형 (모바일) 처리 */
+        @media (max-width: 768px) {
+            .grid-row-2 img { height: 220px; }
+        }
+        @media (max-width: 480px) {
+            .grid-row-2 { grid-template-columns: 1fr; }
+            .grid-row-2 img { height: 250px; }
         }
 
         /* =========================================
-           ⭐️ 팝업 스타일 추가 
+           ⭐️ 팝업 스타일 추가 (우천 팝업 디자인 포함)
            ========================================= */
         .popup-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+            background: rgba(0, 0, 0, 0.6); 
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             backdrop-filter: blur(2px);
         }
-
         .popup-content {
             background: #fff;
             padding: 30px 25px;
@@ -59,34 +75,45 @@
             width: 90%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             animation: popIn 0.3s ease-out;
+            border-top: 5px solid #0056b3; /* 기본 파란색 상단 띠 */
+        }
+        
+        /* 우천 긴급 팝업용 붉은색 테마 */
+        .popup-content.rain-notice {
+            border-top-color: #dc3545; 
         }
 
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
-
         .popup-title {
             margin-top: 0;
             font-size: 1.3rem;
             color: #333;
             margin-bottom: 15px;
+            font-weight: bold;
         }
-
+        .rain-notice .popup-title {
+            color: #dc3545; /* 붉은색 타이틀 */
+        }
+        
         .popup-desc {
             line-height: 1.6;
             color: #444;
-            font-size: 1rem;
+            font-size: 1.05rem;
             margin-bottom: 25px;
             word-break: keep-all;
         }
-
         .popup-desc .highlight {
             color: #0056b3;
             font-weight: bold;
             font-size: 1.1rem;
         }
-
+        .rain-notice .popup-desc .highlight {
+            color: #d9534f; /* 붉은색 강조 */
+        }
+        
         .btn-go-reserve {
             display: block;
             background: #0056b3;
@@ -101,9 +128,11 @@
             margin-bottom: 20px;
             transition: background 0.2s;
         }
-
         .btn-go-reserve:hover {
             background: #004494;
+        }
+        .rain-notice .btn-go-reserve {
+            display: none; /* 우천 시에는 예약하러가기 버튼 숨김 */
         }
 
         .popup-footer {
@@ -115,14 +144,12 @@
             border-top: 1px solid #eee;
             padding-top: 15px;
         }
-
         .popup-footer label {
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
         }
-
         .btn-close-popup {
             background: none;
             border: none;
@@ -141,29 +168,32 @@
         <h1 style="text-align: center; margin-top: 2rem;">환영합니다!</h1>
         <p class="intro-text">2026 성북 물놀이 축제 상단 메뉴를 통해 예약을 진행해 주세요.</p>
         
-        <div class="single-image-wrapper">
-            <img src="public/images/1000019926.jpg" alt="성북문화바캉스 포스터">
+        <!-- ⭐️ 새로운 4구역 이미지 갤러리 -->
+        <div class="gallery-wrapper">
+            <div class="grid-row-2">
+                <img src="public/images/1000020774.jpg" alt="성북문화바캉스 현장 1">
+                <img src="public/images/1000020775.jpg" alt="성북문화바캉스 현장 2">
+            </div>
+            <div class="grid-row-2">
+                <img src="public/images/1000020776.jpg" alt="성북문화바캉스 현장 3">
+                <img src="public/images/1000020777.jpg" alt="성북문화바캉스 현장 4">
+            </div>
         </div>
     </main>
 
     <div id="footer-placeholder"></div>
 
     <!-- =========================================
-         ⭐️ 예약 안내 팝업 HTML 
+         ⭐️ 예약 안내 팝업 HTML (JS에서 동적으로 내용 변경됨)
          ========================================= -->
     <div id="noticePopup" class="popup-overlay" style="display: none;">
-        <div class="popup-content">
-            <h2 class="popup-title">📢 예약 오픈 시간 안내</h2>
-            <p class="popup-desc">
-                성북문화바캉스 길음동<br>
-                성북물놀이축제 물놀이장 예약은<br>
-                <span class="highlight">이용 전날 19:00 ~ 당일 07:00</span><br>
-                까지만 가능합니다.<br><br>
-                <span style="font-size: 0.85em; color: #777;">원활한 이용을 위해 예약 시간을 꼭 확인해 주세요!</span>
-            </p>
+        <div class="popup-content" id="popupContentBox">
+            <h2 class="popup-title" id="popupTitle">📢 예약 오픈 시간 안내</h2>
+            <div class="popup-desc" id="popupDesc">
+                <!-- 스크립트에서 내용 삽입됨 -->
+            </div>
             
-            <!-- 예약 페이지 경로(href)는 실제 예약 페이지 파일명에 맞게 수정해주세요 -->
-            <a href="https://kny-kidsplay.com/reserve" class="btn-go-reserve">예약 바로가기</a>
+            <a href="https://kny-kidsplay.com/reserve" class="btn-go-reserve" id="btnGoReserve">예약 바로가기</a>
             
             <div class="popup-footer">
                 <label>
@@ -200,30 +230,109 @@
         loadIncludes();
 
         // =========================================
-        // ⭐️ 팝업 제어 자바스크립트
+        // ⭐️ DB 연동 동적 팝업 제어 자바스크립트
         // =========================================
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const popup = document.getElementById('noticePopup');
+            const popupContentBox = document.getElementById('popupContentBox');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupDesc = document.getElementById('popupDesc');
+            const btnGoReserve = document.getElementById('btnGoReserve');
             const chkHideToday = document.getElementById('chkHideToday');
             
-            // 로컬 스토리지에서 '오늘 하루 보지 않기' 저장 날짜 확인
-            const hideDate = localStorage.getItem('hideNoticePopupDate');
-            
-            // 한국 시간 기준 현재 날짜 (YYYY-MM-DD 포맷)
-            const today = new Date().toLocaleDateString('ko-KR');
+            const API_BASE = 'https://kny-kidsplay.tonycho999.workers.dev';
 
-            // 저장된 날짜가 오늘과 다르면 팝업 표시
-            if (hideDate !== today) {
-                popup.style.display = 'flex';
+            // 오늘 날짜 계산 (KST 기준)
+            const now = new Date();
+            const offset = now.getTimezoneOffset() * 60000;
+            const todayStr = (new Date(now - offset)).toISOString().split('T')[0];
+
+            function getCookie(name) {
+                let matches = document.cookie.match(new RegExp(
+                    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+                ));
+                return matches ? decodeURIComponent(matches[1]) : undefined;
             }
 
-            // 닫기 버튼 동작 함수 (전역 함수로 등록)
-            window.closePopup = function() {
-                if (chkHideToday.checked) {
-                    // 체크박스에 체크되어 있으면 오늘 날짜를 로컬 스토리지에 저장
-                    localStorage.setItem('hideNoticePopupDate', today);
+            let popupType = 'none'; 
+
+            try {
+                // 서버에 오늘 날짜 성북문화바캉스 우천 공지 설정 요청
+                const res = await fetch(`${API_BASE}/api/settings?date=${todayStr}&location=${encodeURIComponent('성북문화바캉스')}`);
+                const data = await res.json();
+
+                if (data.success && data.is_notice_active) {
+                    popupType = 'rain';
+                    
+                    const closedSlots = data.closed_slots || [];
+                    const isPart1Closed = closedSlots.some(slot => slot.includes('1부'));
+                    const isPart2Closed = closedSlots.some(slot => slot.includes('2부'));
+
+                    // 관리자가 선택한 회차에 따라 문구 조합
+                    if (isPart1Closed && isPart2Closed) {
+                        popupTitle.innerHTML = "📢 긴급 안내 : 우천 휴장";
+                        popupDesc.innerHTML = `
+                            현재 강우 등 기상 악화로 인하여<br>
+                            안전을 위해 <span class="highlight">오늘 하루 전체 물놀이장 운영을 중단</span>합니다.<br><br>
+                            <span style="font-size: 0.9em; color: #777;">이용에 불편을 드려 대단히 죄송합니다.</span>
+                        `;
+                    } else if (isPart1Closed) {
+                        popupTitle.innerHTML = "📢 긴급 안내 : 오전 우천 휴장";
+                        popupDesc.innerHTML = `
+                            현재 기상 악화로 인하여<br>
+                            <span class="highlight">오늘 오전(1부) 물놀이장 운영을 중단</span>합니다.<br><br>
+                            <span style="font-size: 0.95em; color: #333;">오후(2부) 운영 여부는 날씨 상황을 지켜본 후 추후 다시 공지해 드릴 예정입니다.</span>
+                        `;
+                    } else if (isPart2Closed) {
+                        popupTitle.innerHTML = "📢 긴급 안내 : 오후 우천 휴장";
+                        popupDesc.innerHTML = `
+                            현재 기상 악화로 인하여<br>
+                            <span class="highlight">오늘 오후(2부) 물놀이장 운영을 중단</span>합니다.<br><br>
+                            <span style="font-size: 0.9em; color: #777;">이용에 불편을 드려 대단히 죄송합니다.</span>
+                        `;
+                    } else {
+                        popupTitle.innerHTML = "📢 긴급 안내 : 우천 공지";
+                        popupDesc.innerHTML = `
+                            기상 악화로 인하여 물놀이장 운영 일정이<br>
+                            변경될 수 있으니 참고 부탁드립니다.
+                        `;
+                    }
+                } else {
+                    // 우천 설정이 없으면, 일반 예약 안내 팝업 준비
+                    popupType = 'normal';
+                    popupTitle.innerHTML = "📢 예약 오픈 시간 안내";
+                    popupDesc.innerHTML = `
+                        성북문화바캉스 길음동<br>
+                        성북물놀이축제 물놀이장 예약은<br>
+                        <span class="highlight">이용 전날 19:00 ~ 당일 07:00</span><br>
+                        까지만 가능합니다.<br><br>
+                        <span style="font-size: 0.85em; color: #777;">원활한 이용을 위해 예약 시간을 꼭 확인해 주세요!</span>
+                    `;
                 }
-                popup.style.display = 'none';
+
+                // 팝업 표시 여부 결정 (쿠키 확인)
+                const cookieName = popupType === 'rain' ? 'hideRainPopup_SB' : 'hideNormalPopup_SB';
+                
+                if (!getCookie(cookieName)) {
+                    if (popupType === 'rain') {
+                        popupContentBox.classList.add('rain-notice');
+                        btnGoReserve.style.display = 'none'; // 비 올 땐 예약 버튼 숨김
+                    }
+                    popup.style.display = 'flex';
+                }
+
+                // 닫기 버튼 로직 전역 연결
+                window.closePopup = function() {
+                    if (chkHideToday.checked) {
+                        let tomorrow = new Date();
+                        tomorrow.setHours(23, 59, 59, 999);
+                        document.cookie = `${cookieName}=true; expires=${tomorrow.toUTCString()}; path=/`;
+                    }
+                    popup.style.display = 'none';
+                }
+
+            } catch(e) {
+                console.error('팝업 정보 로드 실패', e);
             }
         });
     </script>
