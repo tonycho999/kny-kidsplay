@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             end: "2026-08-09",
             closedDays: [], // 휴장일 없음
             exceptions: [], 
-            capacity: 200,   // 정원 설정 (필요시 변경)
+            capacity: 200,   // 정원 설정 
             slots: [
                 "1부 (10:30~13:00)", 
                 "2부 (14:30~17:20)"
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const API_BASE = 'https://kny-kidsplay.tonycho999.workers.dev';
-
     let currentYear = 2026;
     let currentMonth = 7;
     
@@ -29,10 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedDateDisplay = document.getElementById('selectedDateDisplay');
     const hiddenDateInput = document.getElementById('date');
 
+    // 기본 시간표 비활성화 렌더링
     function renderDefaultTimeSlots() {
         const rule = RULES[selectedLocation];
         if (!rule) return;
-
         timeListContainer.innerHTML = ''; 
         rule.slots.forEach(slot => {
             const label = document.createElement('label');
@@ -61,12 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetDate < start || targetDate > end) return false;
         if (!rule.exceptions?.includes(dateStr) && rule.closedDays.includes(targetDate.getDay())) return false;
 
-        // 예약 오픈 시간 설정 (하루 전 20:00)
+        // 예약 오픈 시간 설정 (하루 전 19:00)
         const openTime = new Date(targetDate);
         openTime.setDate(openTime.getDate() - 1); 
         openTime.setHours(19, 0, 0, 0);           
         
-        // 예약 마감 시간 설정 (당일 00:00)
+        // 예약 마감 시간 설정 (당일 07:00)
         const closeTime = new Date(targetDate);
         closeTime.setHours(7, 0, 0, 0);
 
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentKst = new Date(kst.year, kst.month - 1, kst.day, kst.hour, kst.minute, kst.second);
         
         if (currentKst < openTime || currentKst >= closeTime) return false;
-
         const currentOnlyDate = new Date(kst.year, kst.month - 1, kst.day, 0, 0, 0);
         if (currentOnlyDate > targetDate) return false;
 
@@ -100,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDay = new Date(year, month - 1, 1).getDay();
         const lastDate = new Date(year, month, 0).getDate();
         const rule = RULES[selectedLocation];
-
         let date = 1;
+
         for (let i = 0; i < 6; i++) {
             const row = document.createElement('tr');
             for (let j = 0; j < 7; j++) {
@@ -137,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCalendar(currentYear, currentMonth);
     });
 
+    // ⭐️ [수정] 잔여인원 및 관리자 우천 마감 설정 로드
     async function handleDateClick(cell, dateStr) {
         document.querySelectorAll('#calendarBody td').forEach(td => td.classList.remove('selected'));
         cell.classList.add('selected');
@@ -144,41 +143,60 @@ document.addEventListener('DOMContentLoaded', () => {
         hiddenDateInput.value = dateStr;
         selectedDateDisplay.textContent = dateStr; 
         
-        timeListContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">잔여 인원 조회 중...</p>';
-
+        timeListContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">데이터를 조회 중입니다...</p>';
         const rule = RULES[selectedLocation];
         
         try {
-            const response = await fetch(`${API_BASE}/api/capacity?location=${encodeURIComponent(selectedLocation)}&date=${dateStr}`);
-            const bookedData = await response.json();
+            // ⭐️ 잔여 인원과 우천 설정 상태를 동시에 가져옵니다.
+            const [capacityRes, settingsRes] = await Promise.all([
+                fetch(`${API_BASE}/api/capacity?location=${encodeURIComponent(selectedLocation)}&date=${dateStr}`),
+                fetch(`${API_BASE}/api/settings?date=${dateStr}&location=${encodeURIComponent(selectedLocation)}`)
+            ]);
+
+            const bookedData = await capacityRes.json();
+            const settingsData = await settingsRes.json();
             
+            // ⭐️ 닫힌 회차 목록 가져오기
+            const closedSlots = settingsData.success ? settingsData.closed_slots : [];
+
             const bookedMap = {};
             bookedData.forEach(item => {
                 bookedMap[item.time_slot] = item.booked;
             });
-
             timeListContainer.innerHTML = ''; 
             
             rule.slots.forEach(slot => {
                 const bookedCount = bookedMap[slot] || 0;
                 const remainCount = rule.capacity - bookedCount;
-                const isFull = remainCount <= 0;
+                
+                // ⭐️ 마감 조건: 인원이 다 찼거나 OR 관리자가 닫아버렸거나
+                const isCapacityFull = remainCount <= 0;
+                const isForceClosed = closedSlots.includes(slot);
+                const isFull = isCapacityFull || isForceClosed;
 
                 const label = document.createElement('label');
                 label.className = `time-item ${isFull ? 'disabled' : ''}`;
+                
+                let statusText = '';
+                if (isForceClosed) {
+                    statusText = '(기상악화로 마감)';
+                } else if (isCapacityFull) {
+                    statusText = '(마감)';
+                } else {
+                    statusText = `(잔여: ${remainCount}명 / 정원: ${rule.capacity}명)`;
+                }
                 
                 label.innerHTML = `
                     <input type="radio" name="timeSlot" value="${slot}" ${isFull ? 'disabled' : ''}>
                     <span style="${isFull ? 'color:#dc3545; text-decoration:line-through;' : ''}">
                         ${slot} <br>
                         <small style="color:${isFull ? '#dc3545' : '#28a745'}">
-                            (잔여: ${isFull ? '마감' : remainCount + '명'} / 정원: ${rule.capacity}명)
+                            ${statusText}
                         </small>
                     </span>
                 `;
                 timeListContainer.appendChild(label);
             });
-
         } catch (error) {
             timeListContainer.innerHTML = '<p style="color:red; text-align:center;">데이터를 불러오는 데 실패했습니다.</p>';
             renderDefaultTimeSlots(); 
@@ -188,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCalendar(currentYear, currentMonth);
     renderDefaultTimeSlots();
 
+    // === 인원수 증감 및 폼 제출 ===
     const btnMinus = document.getElementById('btnMinus');
     const btnPlus = document.getElementById('btnPlus');
     const peopleInput = document.getElementById('people');
@@ -201,20 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (reserveForm) {
         reserveForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             if (!hiddenDateInput.value) return alert('달력에서 예약 날짜를 선택해주세요.');
             const timeSlot = document.querySelector('input[name="timeSlot"]:checked');
             if (!timeSlot) return alert('예약 시간을 선택해주세요.');
             
-            // ==========================================
-            // ⭐️ 성북구민 주소 검증 로직으로 수정
-            // ==========================================
-            // const address1 = document.getElementById('address1').value;
-            //if (!address1.includes('성북')) {
-            //    alert('죄송합니다. 성북문화바캉스는 성북구민만 예약이 가능합니다.\n올바른 성북구 주소를 입력해 주세요.');
-            //    return;
-            // }
-
             const agree = document.getElementById('privacyAgree');
             if (!agree.checked) return alert('개인정보 수집 및 이용에 동의해주세요.');
 
