@@ -40,16 +40,28 @@
             font-weight: bold;
         }
         
-        /* ⭐️ 입장료 안내 강조 박스 스타일 */
-        .fee-box {
-            background: #fff3cd;
-            border-left: 5px solid #ffc107;
+        /* ⭐️ 안내 강조 박스 공통 스타일 */
+        .info-box {
             padding: 15px 20px;
             border-radius: 4px;
             margin-bottom: 15px;
             font-size: 1.05rem;
             line-height: 1.6;
         }
+        
+        /* 입장료 안내 박스 */
+        .fee-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+        
+        /* ⭐️ [신규 추가] 입장 인원 안내 박스 */
+        .capacity-box {
+            background: #e9f5ff;
+            border-left: 5px solid #0056b3;
+            color: #004085;
+        }
+        
     </style>
 </head>
 <body>
@@ -57,22 +69,28 @@
 
     <main class="container">
         <h2 style="text-align: center; margin-bottom: 2rem;">이용안내 및 유의사항</h2>
-
+        
         <div class="guide-card">
             <h3>✅ 예약 및 입장 안내</h3>
             
-            <!-- ⭐️ 추가된 입장료 안내 박스 -->
-            <div class="fee-box">
-                <strong>[입장료 안내]</strong><br>
-                ▪ <span class="highlight">성북구민 증빙서류 지참 시 : <strong>입장료 무료</strong></span><br>
-                ▪ 타지역 주민 : <strong>1인당 2,000원</strong> (카드 결제만 가능)<br>
-                ▪ 영유아 (36개월 미만) : 거주지 무관 무료 입장
+            <!-- ⭐️ 입장료 안내 박스 (내용 수정) -->
+            <div class="info-box fee-box">
+                <strong>[이용료 안내]</strong><br>
+                ▪ <span class="highlight">관내 (성북구민 증빙서류 지참 시) : <strong>무료</strong></span><br>
+                ▪ 관외 (타지역 주민) : <strong>1인당 2,000원</strong> (카드 결제만 가능)<br>
+                <span style="font-size: 0.95rem; color: #666;">※ 단, 36개월 미만 영유아는 거주지 무관 무료 입장</span>
+            </div>
+
+            <!-- ⭐️ [신규 추가] 입장 인원 안내 박스 -->
+            <div class="info-box capacity-box">
+                <strong>[입장 인원 안내 (1일 기준)]</strong><br>
+                ▪ <strong>온라인 사전예약 (이용 전일)</strong> : 총 400명 (오전 200명 / 오후 200명)<br>
+                ▪ <strong>현장 선착순 입장 (이용 당일)</strong> : 총 300명 (오전 150명 / 오후 150명)
             </div>
 
             <ul class="guide-list">
-                <li>본 물놀이장은 사전 예약제로 운영되며, 현장 접수도 함께 병행합니다.</li>
                 <li><span class="highlight-red">단체 예약은 불가하며, 개인 예약만 가능합니다.</span></li>
-                <li>입장은 예약하신 1부/2부 시작 전부터 대기 및 본인 확인 후 가능하며, 예약 완료 화면을 제시해 주시기 바랍니다.</li>
+                <li>입장은 예약하신 1부/2부 시작 전부터 대기 및 본인 확인 후 가능하며, 본인 확인을 위해 [예약 조회]를 진행하신 후, 예약 번호·날짜·회차·인원이 모두 표시된 화면을 제시해 주시기 바랍니다.</li>
                 <li>노쇼(No-Show) 발생 시 다음 예약에 불이익이 발생할 수 있습니다. 방문이 어려우실 경우 반드시 사전에 취소해 주세요.</li>
             </ul>
         </div>
