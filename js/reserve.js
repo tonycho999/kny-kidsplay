@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
             exceptions: [], 
             capacity: 200,   // 정원 설정 (필요시 변경)
             slots: [
-                "1부 (10:00~13:00)", 
-                "2부 (14:00~17:00)"
+                "1부 (10:30~13:00)", 
+                "2부 (14:30~17:20)"
             ]
         }
     };
