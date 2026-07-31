@@ -26,21 +26,18 @@
             margin-bottom: 2rem;
             letter-spacing: -1px;
         }
-
-        /* ⭐️ 그리드를 없애고 위아래 여백(gap)을 주는 flex-direction: column으로 변경 */
+        
         .info-layout {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-
         .info-box {
             background: #f8fbff;
             padding: 1.8rem;
             border-radius: 8px;
             border-left: 5px solid #0056b3;
         }
-
         .info-box h4 {
             color: #0056b3;
             margin-top: 0;
@@ -50,13 +47,37 @@
             align-items: center;
             gap: 8px;
         }
-
         .info-box p {
             margin: 0;
             color: #333;
             font-size: 1.1rem;
             line-height: 1.8;
             word-break: keep-all;
+        }
+
+        /* ⭐️ 세부 시간표 리스트 스타일 */
+        .time-schedule {
+            margin-top: 10px;
+            font-size: 1.05rem;
+        }
+        .time-schedule span.badge {
+            display: inline-block;
+            background-color: #0056b3;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        .time-schedule .break {
+            color: #d9534f;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #fdf2f2;
+            border-radius: 5px;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -71,11 +92,10 @@
 
     <main class="container">
         <h2 style="text-align: center; margin-bottom: 2rem;">운영기간 안내</h2>
-
         <div class="info-card">
             <div class="main-title">2026 성북 물놀이축제</div>
-
             <div class="info-layout">
+                
                 <!-- 1. 상단: 운영 기간 -->
                 <div class="info-box">
                     <h4>📅 운영 기간</h4>
@@ -89,16 +109,30 @@
                 <!-- 2. 하단: 운영 시간표 -->
                 <div class="info-box" style="border-left-color: #28a745; background: #f4fdf6;">
                     <h4 style="color: #28a745;">⏰ 운영 시간 (1일 2부제)</h4>
-                    <p>
-                        <strong>[1부]</strong> 10:00 ~ 13:00<br>
-                        <strong>[정비시간]</strong> 13:00 ~ 14:00 (수질 정비 및 휴식)<br>
-                        <strong>[2부]</strong> 14:00 ~ 17:00<br>
-                        <span style="font-size: 0.85em; color: #666; display:inline-block; margin-top:5px;">※ 매시간 50분 운영 / 10분 휴식 진행</span>
-                    </p>
+                    
+                    <div class="time-schedule">
+                        <strong>[1부]</strong>
+                        <div style="margin-left: 10px; margin-top: 5px; color: #444;">
+                            • 10:30 ~ 11:20 <span class="badge" style="background:#17a2b8;">물놀이 50분</span><br>
+                            • 11:30 ~ 12:20 <span class="badge" style="background:#17a2b8;">물놀이 50분</span><br>
+                            • 12:30 ~ 13:00 <span class="badge" style="background:#20c997;">물놀이 30분</span>
+                        </div>
+
+                        <div class="break">
+                            ☕ 13:00 ~ 14:30 (수질 정비 및 전체 휴식)
+                        </div>
+
+                        <strong>[2부]</strong>
+                        <div style="margin-left: 10px; margin-top: 5px; color: #444;">
+                            • 14:30 ~ 15:20 <span class="badge" style="background:#17a2b8;">물놀이 50분</span><br>
+                            • 15:30 ~ 16:20 <span class="badge" style="background:#17a2b8;">물놀이 50분</span><br>
+                            • 16:30 ~ 17:20 <span class="badge" style="background:#17a2b8;">물놀이 50분</span>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
         </div>
-
     </main>
 
     <div id="footer-placeholder"></div>
