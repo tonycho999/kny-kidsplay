@@ -24,7 +24,7 @@
             border-radius: 4px;
         }
 
-        /* ⭐️ 새로 추가된 요약(Summary) 박스 스타일 */
+        /* ⭐️ 요약(Summary) 박스 스타일 */
         .summary-box {
             display: flex;
             gap: 20px;
@@ -44,6 +44,26 @@
         .summary-item span.value { font-weight: 800; font-size: 1.3rem; }
         .summary-item.total .value { color: #0056b3; }    /* 확정 인원 파란색 */
         .summary-item.cancel .value { color: #d9534f; }   /* 취소 인원 빨간색 */
+
+        /* ⭐️ [신규 추가] 운영 설정(우천 휴장) 패널 스타일 */
+        .settings-panel {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            color: #856404;
+        }
+        .settings-panel h3 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .settings-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .settings-row label { font-weight: bold; cursor: pointer; }
+        .btn-save-settings {
+            background-color: #dc3545; color: white; border: none; 
+            padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;
+            margin-left: auto;
+        }
+        .btn-save-settings:hover { background-color: #c82333; }
+        .checkbox-group { display: flex; gap: 15px; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -51,9 +71,37 @@
         <h1>⚙️ 2026 성북 물놀이축제 예약 관리 시스템</h1>
         <a href="../index.html" class="home-btn">홈페이지로 돌아가기</a>
     </header>
+
     <main class="admin-container">
         <h2>예약 내역 리스트</h2>
-        
+
+        <!-- ⭐️ [신규 추가] 우천 휴장 및 회차 마감 설정 패널 -->
+        <div class="settings-panel">
+            <h3>🚨 일일 운영 설정 (우천 및 긴급 휴장 관리)</h3>
+            <div class="settings-row">
+                <div>
+                    <label for="settingDate">설정할 날짜 선택: </label>
+                    <input type="date" id="settingDate" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; margin-left: 5px;">
+                </div>
+                
+                <label style="display:flex; align-items:center; gap:5px; color:#dc3545;">
+                    <input type="checkbox" id="noticeActive" style="width:18px; height:18px;"> 
+                    <strong>메인 화면 우천 휴장 팝업 띄우기</strong>
+                </label>
+
+                <button class="btn-save-settings" id="btnSaveSettings">설정 저장</button>
+            </div>
+            
+            <div class="checkbox-group">
+                <span style="font-weight:bold; margin-right:5px; color:#333;">예약 차단 회차:</span>
+                <label><input type="checkbox" class="slot-checkbox" value="1부 (10:30~13:00)"> 1부 (오전)</label>
+                <label><input type="checkbox" class="slot-checkbox" value="2부 (14:30~17:20)"> 2부 (오후)</label>
+            </div>
+            <p style="font-size:0.85rem; margin-top:10px; margin-bottom:0; color:#666;">
+                ※ 날짜를 선택하면 해당 날짜의 기존 설정이 불러와집니다. 설정을 변경한 후 반드시 [설정 저장] 버튼을 눌러주세요.
+            </p>
+        </div>
+
         <div class="search-area">
             <select id="filterLocation">
                 <option value="성북문화바캉스">성북물놀이축제</option>
@@ -62,8 +110,8 @@
             
             <select id="filterTime">
                 <option value="">모든 회차</option>
-                <option value="1부">1부 (10:00~13:00)</option>
-                <option value="2부">2부 (14:00~17:00)</option>
+                <option value="1부">1부 (10:30~13:00)</option>
+                <option value="2부">2부 (14:30~17:20)</option>
             </select>
             <input type="text" id="searchInput" placeholder="이름, 연락처 또는 예약번호 검색" style="width:250px;">
         </div>
