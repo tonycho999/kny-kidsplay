@@ -130,12 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentMonth === 1) { currentMonth = 12; currentYear--; } else { currentMonth--; }
         renderCalendar(currentYear, currentMonth);
     });
+
     document.getElementById('nextMonth').addEventListener('click', () => {
         if (currentMonth === 12) { currentMonth = 1; currentYear++; } else { currentMonth++; }
         renderCalendar(currentYear, currentMonth);
     });
 
-    // ⭐️ [수정] 잔여인원 및 관리자 우천 마감 설정 로드
+    // ⭐️ 잔여인원 및 관리자 우천 마감 설정 로드
     async function handleDateClick(cell, dateStr) {
         document.querySelectorAll('#calendarBody td').forEach(td => td.classList.remove('selected'));
         cell.classList.add('selected');
@@ -147,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rule = RULES[selectedLocation];
         
         try {
-            // ⭐️ 잔여 인원과 우천 설정 상태를 동시에 가져옵니다.
             const [capacityRes, settingsRes] = await Promise.all([
                 fetch(`${API_BASE}/api/capacity?location=${encodeURIComponent(selectedLocation)}&date=${dateStr}`),
                 fetch(`${API_BASE}/api/settings?date=${dateStr}&location=${encodeURIComponent(selectedLocation)}`)
@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const bookedData = await capacityRes.json();
             const settingsData = await settingsRes.json();
             
-            // ⭐️ 닫힌 회차 목록 가져오기
             const closedSlots = settingsData.success ? settingsData.closed_slots : [];
 
             const bookedMap = {};
@@ -169,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const bookedCount = bookedMap[slot] || 0;
                 const remainCount = rule.capacity - bookedCount;
                 
-                // ⭐️ 마감 조건: 인원이 다 찼거나 OR 관리자가 닫아버렸거나
                 const isCapacityFull = remainCount <= 0;
                 const isForceClosed = closedSlots.includes(slot);
                 const isFull = isCapacityFull || isForceClosed;
@@ -259,23 +257,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (response.ok && result.success) {
                     const formContainer = reserveForm.parentElement;
+                    
+                    // ⭐️ [수정] 티켓 형태의 예약 완료 화면 렌더링
                     formContainer.innerHTML = `
-                        <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd; margin-top: 1rem;">
-                            <h3 style="color: #28a745; margin-bottom: 1rem;">🎉 예약이 성공적으로 접수되었습니다!</h3>
-                            <p style="color: #666; margin-bottom: 1rem;">추후 예약 조회/취소 시 필요하오니 아래 예약 번호를 반드시 복사해 두세요.</p>
-                            
-                            <div style="margin: 1.5rem auto; padding: 1rem; background: #fff; border: 2px dashed #0056b3; font-size: 1.8rem; font-weight: bold; color: #0056b3; width: 80%; letter-spacing: 2px;">
-                                ${result.reservation_code}
+                        <div style="text-align: center; padding: 1.5rem 0;">
+                            <div id="ticketArea" style="background: #fff; padding: 2rem 1rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #0056b3; margin: 0 auto 1.5rem auto; width: 100%; max-width: 350px;">
+                                <h3 style="color: #28a745; margin-top: 0; margin-bottom: 1rem;">🎉 예약 완료</h3>
+                                <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.95rem; word-break: keep-all;">입장 시 본 화면을 보여주세요.</p>
+                                
+                                <div style="text-align: left; padding: 0 10px;">
+                                    <div style="margin-bottom: 12px; font-size: 1.05rem; display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
+                                        <strong style="color:#555;">📅 예약 날짜</strong> <span style="font-weight:bold;">${hiddenDateInput.value}</span>
+                                    </div>
+                                    <div style="margin-bottom: 12px; font-size: 1.05rem; display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
+                                        <strong style="color:#555;">⏰ 예약 회차</strong> <span style="font-weight:bold; color:#0056b3;">${timeSlot.value.split(' ')[0]}</span>
+                                    </div>
+                                    <div style="margin-bottom: 12px; font-size: 1.05rem; display: flex; justify-content: space-between;">
+                                        <strong style="color:#555;">👨‍👩‍👧‍👦 예약 인원</strong> <span style="font-weight:bold;">${peopleInput.value}명</span>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px dashed #0056b3; text-align: center;">
+                                    <span style="font-size: 0.9rem; color: #888; display: block; margin-bottom: 5px;">예약 번호</span>
+                                    <span style="display: inline-block; font-size: 1.8rem; font-weight: bold; color: #0056b3; letter-spacing: 2px; font-family: monospace;">${result.reservation_code}</span>
+                                </div>
                             </div>
                             
-                            <button type="button" onclick="navigator.clipboard.writeText('${result.reservation_code}').then(() => alert('예약 번호가 복사되었습니다!'))" class="btn-black" style="padding: 10px 20px; font-size: 1rem; margin-bottom: 1.5rem; cursor: pointer;">
-                                📋 예약 번호 복사하기
+                            <!-- ⭐️ 스크린샷 캡처 버튼 -->
+                            <button type="button" id="btnScreenshot" class="btn-black" style="padding: 15px 20px; font-size: 1.1rem; cursor: pointer; width: 100%; max-width: 350px; margin: 0 auto;">
+                                📸 화면 스크린샷 저장하기
                             </button>
-                            <br>
-                            <button type="button" onclick="location.reload()" class="submit-btn" style="width: auto; padding: 10px 30px;">확인 (초기화)</button>
                         </div>
                     `;
                     formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // ⭐️ [신규 추가] html2canvas 라이브러리를 사용한 스크린샷 캡처 로직
+                    document.getElementById('btnScreenshot').addEventListener('click', function() {
+                        const btn = this;
+                        btn.textContent = '사진 저장 중...';
+                        btn.disabled = true;
+
+                        // 스크린샷용 라이브러리 동적 로드
+                        const script = document.createElement('script');
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                        script.onload = () => {
+                            const targetEl = document.getElementById('ticketArea');
+                            
+                            html2canvas(targetEl, { scale: 2 }).then(canvas => {
+                                // 이미지 다운로드 생성
+                                const link = document.createElement('a');
+                                link.download = `물놀이예약티켓_${hiddenDateInput.value}.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                                
+                                alert('예약 티켓이 사진첩(갤러리/다운로드 폴더)에 저장되었습니다.\n처음 화면으로 돌아갑니다.');
+                                location.reload(); // ⭐️ 알림 후 자동 새로고침(초기화)
+                            }).catch(err => {
+                                alert('스크린샷 저장 중 오류가 발생했습니다. 직접 화면을 캡처해 주세요.');
+                                btn.textContent = '📸 화면 스크린샷 저장하기';
+                                btn.disabled = false;
+                            });
+                        };
+                        document.body.appendChild(script);
+                    });
+
                 } else {
                     alert(`예약 처리 중 오류가 발생했습니다: \n${result.message || result.error || '알 수 없는 오류'}`);
                     submitBtn.textContent = '예약 신청하기';
