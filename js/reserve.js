@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const API_BASE = 'https://kny-kidsplay.tonycho999.workers.dev';
     let currentYear = 2026;
-    let currentMonth = 7;
+    let currentMonth = 8;
     
     // 단일 장소 고정
     let selectedLocation = "성북문화바캉스";
