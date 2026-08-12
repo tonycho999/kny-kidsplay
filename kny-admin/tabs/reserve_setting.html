@@ -1,0 +1,31 @@
+<h2>예약 일정 및 회차 설정</h2>
+<div class="cms-section">
+    <h3>📍 장소 관리</h3>
+    <p style="font-size: 0.9rem; color: #666;">운영할 장소를 추가하세요.</p>
+    <div class="form-group" style="display: flex; gap: 10px;">
+        <input type="text" placeholder="새 장소명 입력">
+        <button style="padding: 10px 20px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer;">추가</button>
+    </div>
+</div>
+<div class="cms-section">
+    <h3>⏰ 회차 관리 (시간표)</h3>
+    <p style="font-size: 0.9rem; color: #666;">선택한 장소에 예약 회차와 정원을 설정합니다.</p>
+    <div style="background: #f8f9fa; padding: 15px; border: 1px dashed #ccc; text-align: center;">장소를 먼저 선택하면 회차 추가 화면이 나타납니다.</div>
+</div>
+<div class="cms-section">
+    <h3>🗓️ 예약 오픈 일정 관리</h3>
+    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-group" style="flex:1;"><label>이용 시작일</label><input type="date"></div>
+        <div class="form-group" style="flex:1;"><label>이용 종료일</label><input type="date"></div>
+        <div class="form-group" style="flex:1;"><label>예약 오픈 일시</label><input type="datetime-local"></div>
+        <button style="padding: 10px 20px; margin-bottom: 15px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer;">규칙 추가</button>
+    </div>
+</div>
+<div class="cms-section">
+    <h3>📝 주소 입력란 안내 문구 (선택)</h3>
+    <div class="form-group">
+        <label>사용자가 예약 시 주소 입력칸 아래에 보일 문구를 작성하세요.</label>
+        <input type="text" placeholder="예: *과천시민 확인용 주소를 넣어주세요.">
+    </div>
+</div>
+<button class="btn-submit-cms" onclick="saveCmsData('reservation')">예약 규칙 저장하기</button>
