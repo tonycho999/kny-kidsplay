@@ -1,4 +1,6 @@
 <h2>팝업 및 우천 마감 관리</h2>
+
+<!-- 우천/긴급 설정 (유지) -->
 <div class="settings-panel" style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
     <h3>🚨 우천 및 긴급 예약 차단 (당일 마감)</h3>
     <p style="font-size:0.9rem; margin-top:0;">비가 오거나 긴급 상황 시, 특정 날짜의 예약을 막고 마감 처리합니다.</p>
@@ -9,23 +11,38 @@
     </div>
     <div class="checkbox-group" id="dynamicSlotCheckboxes">
         <span style="font-weight:bold; margin-right:5px; color:#333;">예약 차단 회차 선택:</span>
-        <label><input type="checkbox" class="slot-checkbox" value="1부 (10:30~13:00)"> 1부 (오전)</label>
-        <label><input type="checkbox" class="slot-checkbox" value="2부 (14:30~17:20)"> 2부 (오후)</label>
         <span style="font-size:0.85rem; color:#888;">(추후 DB 연동 시 등록된 회차가 자동으로 나타납니다.)</span>
     </div>
 </div>
 
+<!-- ⭐️ 변경된 동적 팝업 설정 -->
 <div class="cms-section">
-    <h3>📢 페이지별 일반 팝업 설정</h3>
-    <div class="popup-toggle-box"><label><input type="checkbox"> 1. 첫 화면 (메인 팝업)</label></div>
-    <div id="editor-popup-main" style="height: 150px; background: white; margin-bottom: 20px;"></div>
-    <div class="popup-toggle-box"><label><input type="checkbox"> 2. [이용안내] 화면 팝업</label></div>
-    <div id="editor-popup-guide" style="height: 150px; background: white; margin-bottom: 20px;"></div>
-    <div class="popup-toggle-box"><label><input type="checkbox"> 3. [운영기간] 화면 팝업</label></div>
-    <div id="editor-popup-period" style="height: 150px; background: white; margin-bottom: 20px;"></div>
-    <div class="popup-toggle-box"><label><input type="checkbox"> 4. [예약하기] 화면 팝업</label></div>
-    <div id="editor-popup-reserve" style="height: 150px; background: white; margin-bottom: 20px;"></div>
-    <div class="popup-toggle-box"><label><input type="checkbox"> 5. [오시는길] 화면 팝업</label></div>
-    <div id="editor-popup-location" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+    <h3>📢 새 팝업 만들기</h3>
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">어느 페이지에 띄울지 선택하고 팝업 내용을 작성하세요. (한 페이지에 여러 개 띄우기도 가능합니다)</p>
+    
+    <div class="form-group" style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <select id="new-popup-target" style="padding:10px; border:1px solid #ccc; border-radius:4px; width:150px;">
+            <option value="main">첫 화면 (메인)</option>
+            <option value="guide">이용안내 화면</option>
+            <option value="period">운영기간 화면</option>
+            <option value="reserve">예약하기 화면</option>
+            <option value="location">오시는길 화면</option>
+        </select>
+        <input type="text" id="new-popup-title" placeholder="팝업 관리용 제목 (예: 주말 생존수영 안내)" style="flex:1;">
+    </div>
+    
+    <!-- 팝업 내용 에디터 -->
+    <div id="editor-popup-new" style="height: 150px; background: white; margin-bottom: 15px;"></div>
+    
+    <button class="btn-submit-cms" onclick="addPopup()">새 팝업 등록하기</button>
 </div>
-<button class="btn-submit-cms" onclick="saveCmsData('popup')">팝업 설정 저장하기</button>
+
+<div class="cms-section">
+    <h3>📌 현재 등록된 팝업 목록</h3>
+    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">토글 스위치(체크박스)를 눌러 팝업을 즉시 켜고 끌 수 있습니다.</p>
+    
+    <div id="popup-list-container">
+        <!-- DB에서 불러온 팝업들이 여기에 그려집니다 -->
+        <p style="color:#999; text-align:center; padding:20px;">등록된 팝업이 없습니다.</p>
+    </div>
+</div>
