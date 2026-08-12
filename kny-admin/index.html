@@ -60,6 +60,9 @@
 
             // HTML이 다 그려진 후에! 에디터를 초기화해야 에러가 안 납니다.
             initEditors();
+            
+            // ⭐️ 탭이 다 불러와지면 DB에서 장소/회차 옵션 목록 가져와서 콤보박스에 채우기
+            loadDynamicOptions();
         }
 
         // ⭐️ 탭 전환 함수
@@ -89,6 +92,50 @@
             new Quill('#editor-popup-period', editorOptions);
             new Quill('#editor-popup-reserve', editorOptions);
             new Quill('#editor-popup-location', editorOptions);
+        }
+
+        // ⭐️ DB에서 행사명, 장소, 회차를 가져와서 콤보박스에 동적으로 채워넣는 함수
+        async function loadDynamicOptions() {
+            try {
+                // (주의) 백엔드 Worker에 /api/admin/init-options 라우트가 존재해야 합니다.
+                const response = await fetch('/api/admin/init-options');
+                const data = await response.json();
+
+                if (data.success) {
+                    const locSelect = document.getElementById('filterLocation');
+                    const timeSelect = document.getElementById('filterTime');
+
+                    // 1. 행사명/장소명 채우기
+                    if (locSelect) {
+                        locSelect.innerHTML = ''; // "불러오는 중..." 임시 문구 삭제
+                        
+                        // 장소(location)가 여러 개 등록되어 있으면 '사이트명 + 장소명'으로 결합하여 표시
+                        if (data.locations && data.locations.length > 0) {
+                            data.locations.forEach(loc => {
+                                locSelect.innerHTML += `<option value="${loc.name}">[${data.siteName}] ${loc.name}</option>`;
+                            });
+                        } else {
+                            // 장소가 아직 DB에 없으면 기본 사이트명만 표시
+                            locSelect.innerHTML = `<option value="${data.siteName}">${data.siteName}</option>`;
+                        }
+                    }
+
+                    // 2. 회차(Time Slots) 채우기
+                    if (timeSelect) {
+                        timeSelect.innerHTML = '<option value="">모든 회차</option>'; // 전체 보기 옵션 유지
+                        
+                        // DB에 저장된 회차가 있으면 시간과 함께 표시
+                        if (data.timeSlots && data.timeSlots.length > 0) {
+                            data.timeSlots.forEach(slot => {
+                                // value에는 slot_name이 들어가고, 화면에는 시간대까지 포함해서 보여줌
+                                timeSelect.innerHTML += `<option value="${slot.slot_name}">${slot.slot_name} (${slot.start_time}~${slot.end_time})</option>`;
+                            });
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("옵션 데이터 로드 중 오류 발생 (DB API 확인 필요):", error);
+            }
         }
 
         // ⭐️ 임시 저장 버튼 함수
