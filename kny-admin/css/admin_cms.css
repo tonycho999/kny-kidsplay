@@ -1,0 +1,40 @@
+/* ⭐️ 탭 메뉴 스타일 */
+.tab-menu { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #0056b3; padding-bottom: 10px; flex-wrap: wrap; }
+.tab-btn { padding: 12px 20px; border: none; background: #e0e0e0; font-weight: bold; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 1.05rem; transition: 0.2s; }
+.tab-btn.active { background: #0056b3; color: white; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* 기존 예약관리 스타일 */
+.search-area { margin: 1.5rem 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.search-area input, .search-area select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+.summary-box { display: flex; gap: 20px; background: #eef2f5; padding: 15px 20px; border-radius: 8px; border-left: 5px solid #0056b3; margin-bottom: 1.5rem; font-size: 1.1rem; flex-wrap: wrap; }
+.summary-item { display: flex; align-items: center; gap: 8px; }
+.summary-item span.label { font-weight: bold; color: #555; }
+.summary-item span.value { font-weight: 800; font-size: 1.3rem; }
+.summary-item.total .value { color: #0056b3; }
+.summary-item.cancel .value { color: #d9534f; }
+
+/* 우천 및 긴급 휴장 설정 스타일 */
+.settings-panel { background-color: #fff3cd; border: 1px solid #ffeeba; padding: 20px; border-radius: 8px; margin-bottom: 2rem; color: #856404; }
+.settings-panel h3 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+.settings-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+.settings-row label { font-weight: bold; cursor: pointer; }
+.btn-save-settings { background-color: #dc3545; color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: auto; }
+.btn-save-settings:hover { background-color: #c82333; }
+.checkbox-group { display: flex; gap: 15px; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba; flex-wrap: wrap; }
+
+/* CMS 섹션 스타일 */
+.cms-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 25px; border: 1px solid #e1e8ed; }
+.cms-section h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; color: #2c3e50; font-size: 1.1rem; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+.form-group input[type="text"], .form-group input[type="date"], .form-group input[type="datetime-local"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+
+.btn-submit-cms { background-color: #28a745; color: white; border: none; padding: 15px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: block; width: 100%; margin-top: 10px; transition: 0.2s; }
+.btn-submit-cms:hover { background-color: #218838; }
+
+/* 팝업 토글 스위치 형태 */
+.popup-toggle-box { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #ddd; }
+.popup-toggle-box label { font-weight: bold; color: #333; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+.popup-toggle-box input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
