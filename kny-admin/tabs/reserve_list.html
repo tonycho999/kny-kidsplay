@@ -1,0 +1,30 @@
+<div class="search-area">
+    <select id="filterLocation">
+        <option value="성북문화바캉스">성북물놀이축제</option>
+    </select>
+    <input type="date" id="filterDate">
+    <select id="filterTime">
+        <option value="">모든 회차</option>
+        <option value="1부">1부 (10:30~13:00)</option>
+        <option value="2부">2부 (14:30~17:20)</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="이름, 연락처 또는 예약번호 검색" style="width:250px;">
+</div>
+<div class="summary-box">
+    <div class="summary-item total">
+        <span class="label">✅ 확정 예약 인원 (취소 제외) :</span>
+        <span class="value" id="totalBookedCount">0</span>명
+    </div>
+    <div class="summary-item cancel">
+        <span class="label">❌ 취소된 인원 :</span>
+        <span class="value" id="totalCanceledCount">0</span>명
+    </div>
+</div>
+<table class="admin-table">
+    <thead>
+        <tr><th>예약일시(회차)</th><th>예약번호</th><th>예약자 정보</th><th>주소</th><th>인원</th><th>상태</th></tr>
+    </thead>
+    <tbody id="reservationList">
+        <tr><td colspan="6">데이터를 불러오는 중입니다...</td></tr>
+    </tbody>
+</table>
