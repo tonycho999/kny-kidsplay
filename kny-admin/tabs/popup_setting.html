@@ -1,0 +1,31 @@
+<h2>팝업 및 우천 마감 관리</h2>
+<div class="settings-panel" style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+    <h3>🚨 우천 및 긴급 예약 차단 (당일 마감)</h3>
+    <p style="font-size:0.9rem; margin-top:0;">비가 오거나 긴급 상황 시, 특정 날짜의 예약을 막고 마감 처리합니다.</p>
+    <div class="settings-row">
+        <div><label for="settingDate">마감할 날짜 선택: </label><input type="date" id="settingDate" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; margin-left: 5px;"></div>
+        <label style="display:flex; align-items:center; gap:5px; color:#dc3545;"><input type="checkbox" id="noticeActive" style="width:18px; height:18px;"><strong>우천 안내 팝업 활성화 (메인화면)</strong></label>
+        <button class="btn-save-settings" id="btnSaveSettings">긴급 설정 저장</button>
+    </div>
+    <div class="checkbox-group" id="dynamicSlotCheckboxes">
+        <span style="font-weight:bold; margin-right:5px; color:#333;">예약 차단 회차 선택:</span>
+        <label><input type="checkbox" class="slot-checkbox" value="1부 (10:30~13:00)"> 1부 (오전)</label>
+        <label><input type="checkbox" class="slot-checkbox" value="2부 (14:30~17:20)"> 2부 (오후)</label>
+        <span style="font-size:0.85rem; color:#888;">(추후 DB 연동 시 등록된 회차가 자동으로 나타납니다.)</span>
+    </div>
+</div>
+
+<div class="cms-section">
+    <h3>📢 페이지별 일반 팝업 설정</h3>
+    <div class="popup-toggle-box"><label><input type="checkbox"> 1. 첫 화면 (메인 팝업)</label></div>
+    <div id="editor-popup-main" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+    <div class="popup-toggle-box"><label><input type="checkbox"> 2. [이용안내] 화면 팝업</label></div>
+    <div id="editor-popup-guide" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+    <div class="popup-toggle-box"><label><input type="checkbox"> 3. [운영기간] 화면 팝업</label></div>
+    <div id="editor-popup-period" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+    <div class="popup-toggle-box"><label><input type="checkbox"> 4. [예약하기] 화면 팝업</label></div>
+    <div id="editor-popup-reserve" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+    <div class="popup-toggle-box"><label><input type="checkbox"> 5. [오시는길] 화면 팝업</label></div>
+    <div id="editor-popup-location" style="height: 150px; background: white; margin-bottom: 20px;"></div>
+</div>
+<button class="btn-submit-cms" onclick="saveCmsData('popup')">팝업 설정 저장하기</button>
