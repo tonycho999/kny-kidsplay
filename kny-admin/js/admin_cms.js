@@ -20,6 +20,9 @@ async function loadTabs() {
     }
 
     initEditors();
+    const script = document.createElement('script');
+    script.src = '../js/admin.js';
+    document.body.appendChild(script);
     loadDynamicOptions();
     loadHomepageSettings(); 
     loadReserveSettings();
