@@ -1,0 +1,8 @@
+name = "kny-kidsplay"
+compatibility_date = "2024-03-20"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kny-kidsplay" 
+database_id = "9bf1fa53-e0fa-4c34-af39-8a9671e7bec7"  
