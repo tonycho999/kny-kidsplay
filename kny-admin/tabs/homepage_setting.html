@@ -1,40 +1,39 @@
-<h2>홈페이지 기본 내용 수정</h2>
+<h2>🏠 홈페이지 콘텐츠 관리 (Blogger 연동)</h2>
+
 <div class="cms-section">
-    <h3>1. 업체명 / 타이틀 설정</h3>
-    <div class="form-group">
-        <label>홈페이지 최상단 메뉴바에 보일 이름</label>
-        <input type="text" id="cms-site-title" placeholder="예: 2026 성북문화바캉스 어린이 물놀이장">
+    <div class="bl-toolbar">
+        <a class="bl-btn create" href="https://www.blogger.com/blog/post/create/6550478255785327417" target="_blank">📝 새 글 작성</a>
+        <a class="bl-btn manage" href="https://www.blogger.com/blog/posts/6550478255785327417" target="_blank">📋 블로그 관리 화면</a>
+        <button class="bl-btn refresh" onclick="loadBloggerContents()">🔄 새로고침</button>
+    </div>
+
+    <div class="bl-notice">
+        ✅ 모든 글에 <strong>라벨 kny-kidsplay</strong>를 꼭 입력하고 <strong>[게시]</strong>를 눌러주세요. (임시저장 글은 반영되지 않습니다)<br>
+        ✅ <strong>제목은 아래 표의 이름과 정확히 같아야</strong> 해당 화면에 나타납니다.<br>
+        ✅ 같은 제목의 글이 여러 개면 <strong>가장 최근에 게시한 글</strong>이 사용됩니다.<br>
+        ✅ 글을 고친 뒤 홈페이지에 반영되기까지 수 초~몇 분이 걸릴 수 있습니다.
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table class="bl-table">
+            <thead>
+                <tr><th style="width:14%;">글 제목</th><th style="width:30%;">표시되는 곳</th><th style="width:26%;">상태</th><th style="width:15%;">최근 수정</th><th style="width:15%;">관리</th></tr>
+            </thead>
+            <tbody id="bl-page-tbody">
+                <tr><td colspan="5" style="padding:25px; color:#888;">불러오는 중...</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <div class="cms-section">
-    <h3>2. [첫 화면(메인)] 본문 내용 수정</h3>
-    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">홈페이지 접속 시 가장 먼저 보이는 환영 문구나 메인 공지사항을 작성하세요.</p>
-    <div id="editor-main-page" style="height: 200px; background: white;"></div>
-</div>
+    <h3>📝 글 작성 예시</h3>
+    <p style="font-weight:bold; margin-bottom:6px;">① 프로젝트명 (본문 첫 줄이 홈페이지 로고가 됩니다)</p>
+    <div class="bl-example">성수동 물놀이 예약</div>
 
-<div class="cms-section">
-    <h3>3. [운영기간안내] 페이지 수정</h3>
-    <div id="editor-period" style="height: 200px; background: white;"></div>
+    <p style="font-weight:bold; margin:18px 0 6px;">② 오시는길 (첫 줄에 주소, 아래에 네이버 지도 이미지 첨부)</p>
+    <div class="bl-example">주소 : 서울특별시 성동구 왕십리로 83-21
+[네이버 지도 캡처 이미지 첨부]
+지하철 2호선 성수역 3번 출구 도보 5분</div>
+    <p style="font-size:0.85rem; color:#666; margin-top:8px;">※ 홈페이지에서 지도 이미지를 누르면 위 주소로 네이버 지도가 열립니다.</p>
 </div>
-
-<div class="cms-section">
-    <h3>4. [이용안내] 페이지 수정</h3>
-    <div id="editor-guide" style="height: 200px; background: white;"></div>
-</div>
-
-<div class="cms-section">
-    <h3>5. [오시는길] 위치 및 지도 설정</h3>
-    <div class="form-group">
-        <label>지도 이미지 주소 (또는 외부 링크)</label>
-        <!-- ⭐️ id="cms-map-url" 추가 -->
-        <input type="text" id="cms-map-url" placeholder="예: /images/map.png">
-    </div>
-    <div class="form-group">
-        <label>네이버 지도 연동용 정확한 도로명 주소</label>
-        <!-- ⭐️ id="cms-map-address" 추가 -->
-        <input type="text" id="cms-map-address" placeholder="예: 서울특별시 성북구 화랑로 18자길 13">
-    </div>
-</div>
-
-<button class="btn-submit-cms" onclick="saveCmsData('homepage')">홈페이지 설정 저장하기</button>
