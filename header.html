@@ -17,14 +17,13 @@
         font-size: 1.6rem !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
+        min-height: 2.2rem;      /* ⭐️ 로고가 비어 있어도 헤더 높이가 흔들리지 않게 */
+        min-width: 1px;
     }
     header .logo a {
         color: #ffffff !important;
         text-decoration: none;
     }
-    /* ⭐️ 로고 불러오는 동안 글자 깜빡임 방지 */
-    #dynamic-logo-text { transition: opacity 0.2s; }
-    #dynamic-logo-text.loading { opacity: 0; }
 
     header .menu-toggle {
         color: #ffffff !important;
@@ -83,8 +82,8 @@
 </style>
 
 <header>
-    <!-- ⭐️ 로고 글자는 Blogger '프로젝트명' 글에서 자동으로 채워집니다 -->
-    <div class="logo"><a href="index.html" id="dynamic-logo-text" class="loading">물놀이장 예약</a></div>
+    <!-- ⭐️ 로고는 비워둠: Blogger '프로젝트명' 글(라벨 kny-kidsplay)에서만 채워집니다 -->
+    <div class="logo"><a href="index.html" id="dynamic-logo-text"></a></div>
     <button class="menu-toggle" id="menuToggle">☰</button>
     <nav id="navMenu">
         <ul>
@@ -97,8 +96,12 @@
     </nav>
 </header>
 
-<script>
+<!-- ⭐️ 로고 처리 스크립트 -->
+<script id="kp-logo-script">
 (function () {
+    if (window.__kpLogoRun) return;   // 두 번 실행 방지
+    window.__kpLogoRun = true;
+
     // ⭐️ Blogger 설정값 (라벨이 바뀌면 여기만 수정)
     var BLOG_URL = 'https://kny-company.blogspot.com';
     var SITE_LABEL = 'kny-kidsplay';
@@ -107,19 +110,18 @@
     var logo = document.getElementById('dynamic-logo-text');
     if (!logo) return;
 
-    // 페이지 탭 제목: "예약하기 - 옛이름" → "예약하기 - 프로젝트명"
     function applyName(name) {
         if (!name) return;
         logo.textContent = name;
-        logo.classList.remove('loading');
-        var t = document.title || '';
-        document.title = t.indexOf(' - ') > -1 ? t.split(' - ')[0] + ' - ' + name : name;
+        // 브라우저 탭 제목: "예약하기" → "예약하기 - 프로젝트명"
+        var base = (document.title || '').split(' - ')[0].trim();
+        document.title = base && base !== name ? base + ' - ' + name : name;
     }
 
-    // 1) 이전에 받아둔 이름이 있으면 먼저 바로 표시 (깜빡임 방지)
+    // 1) 지난번에 받아둔 이름이 있으면 먼저 표시
     try { applyName(localStorage.getItem(CACHE_KEY)); } catch (e) {}
 
-    // 본문 HTML의 첫 줄 글자만 뽑기
+    // 본문 HTML에서 첫 줄 글자만 뽑기
     function firstLine(html) {
         var div = document.createElement('div');
         div.innerHTML = String(html || '')
@@ -132,12 +134,11 @@
     }
 
     // 2) Blogger에서 최신 프로젝트명 받기 (JSONP)
-    var cb = '__kidsplayHeaderCb_' + Date.now();
+    var cb = '__kpLogoCb_' + Date.now();
     var s = document.createElement('script');
     window[cb] = function (data) {
         try {
             var entries = (data.feed && data.feed.entry) || [];
-            // 라벨이 정확히 kny-kidsplay이고, 제목이 '프로젝트명'인 글 중 최신 글
             var post = entries.find(function (e) {
                 var labelOk = (e.category || []).some(function (c) { return c.term === SITE_LABEL; });
                 var title = ((e.title && e.title.$t) || '').replace(/\s/g, '');
@@ -149,16 +150,23 @@
                     applyName(name);
                     try { localStorage.setItem(CACHE_KEY, name); } catch (e) {}
                 }
+            } else {
+                // ⭐️ 프로젝트명 글이 삭제/임시저장되면 예전 이름도 지움
+                logo.textContent = '';
+                try { localStorage.removeItem(CACHE_KEY); } catch (e) {}
             }
         } finally {
-            logo.classList.remove('loading');
             delete window[cb];
             s.remove();
         }
     };
-    s.onerror = function () { logo.classList.remove('loading'); delete window[cb]; s.remove(); };
+    s.onerror = function () { delete window[cb]; s.remove(); };
     s.src = BLOG_URL + '/feeds/posts/default/-/' + encodeURIComponent(SITE_LABEL) +
             '?alt=json-in-script&max-results=150&orderby=published&callback=' + cb + '&_=' + Date.now();
     document.body.appendChild(s);
 })();
 </script>
+
+<!-- ⭐️ innerHTML로 불러와도 위 스크립트가 실행되게 하는 장치 (지우지 마세요) -->
+<img src="data:," alt="" style="display:none"
+     onerror="if(!window.__kpLogoRun){var o=document.getElementById('kp-logo-script');if(o){var n=document.createElement('script');n.textContent=o.textContent;document.body.appendChild(n);}}this.remove();">
