@@ -17,12 +17,25 @@
         font-size: 1.6rem !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
-        min-height: 2.2rem;      /* ⭐️ 로고가 비어 있어도 헤더 높이가 흔들리지 않게 */
+        min-height: 2.2rem;
         min-width: 1px;
+        display: flex;
+        align-items: center;
     }
     header .logo a {
         color: #ffffff !important;
         text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    /* ⭐️ 로고 이미지 크기 */
+    header .logo .kp-logo-img {
+        max-height: 50px;
+        max-width: 220px;
+        width: auto;
+        height: auto;
+        display: block;
     }
 
     header .menu-toggle {
@@ -54,6 +67,8 @@
     }
 
     @media (max-width: 768px) {
+        header .logo { font-size: 1.3rem !important; }
+        header .logo .kp-logo-img { max-height: 40px; max-width: 170px; }
         header nav {
             display: none;
             width: 100%;
@@ -82,7 +97,7 @@
 </style>
 
 <header>
-    <!-- ⭐️ 로고는 비워둠: Blogger '프로젝트명' 글(라벨 kny-kidsplay)에서만 채워집니다 -->
+    <!-- ⭐️ 로고는 비워둠: Blogger '프로젝트명' 글(라벨 kny-kidsplay)의 이미지/글자로만 채워집니다 -->
     <div class="logo"><a href="index.html" id="dynamic-logo-text"></a></div>
     <button class="menu-toggle" id="menuToggle">☰</button>
     <nav id="navMenu">
@@ -105,33 +120,67 @@
     // ⭐️ Blogger 설정값 (라벨이 바뀌면 여기만 수정)
     var BLOG_URL = 'https://kny-company.blogspot.com';
     var SITE_LABEL = 'kny-kidsplay';
-    var CACHE_KEY = 'kidsplay_project_name';
+    var CACHE_KEY = 'kidsplay_project_v2';
 
     var logo = document.getElementById('dynamic-logo-text');
     if (!logo) return;
 
-    function applyName(name) {
-        if (!name) return;
-        logo.textContent = name;
-        // 브라우저 탭 제목: "예약하기" → "예약하기 - 프로젝트명"
-        var base = (document.title || '').split(' - ')[0].trim();
-        document.title = base && base !== name ? base + ' - ' + name : name;
+    // Blogger 이미지 주소를 로고용 크기로 변환 (작은 썸네일 → 선명한 크기)
+    function upsize(url) {
+        if (!url) return '';
+        return url
+            .replace(/\/s\d+(-[a-z0-9-]+)?\//i, '/s600/')
+            .replace(/\/w\d+-h\d+[^/]*\//i, '/s600/')
+            .replace(/=s\d+(-[a-z0-9-]+)?$/i, '=s600')
+            .replace(/=w\d+-h\d+[^/]*$/i, '=s600');
     }
 
-    // 1) 지난번에 받아둔 이름이 있으면 먼저 표시
-    try { applyName(localStorage.getItem(CACHE_KEY)); } catch (e) {}
-
-    // 본문 HTML에서 첫 줄 글자만 뽑기
-    function firstLine(html) {
+    // 본문에서 첫 번째 이미지 + 첫 줄 글자 뽑기
+    function parseProject(html) {
         var div = document.createElement('div');
-        div.innerHTML = String(html || '')
+        div.innerHTML = String(html || '');
+        var imgEl = div.querySelector('img');
+        var img = imgEl ? upsize(imgEl.getAttribute('src')) : '';
+
+        var div2 = document.createElement('div');
+        div2.innerHTML = String(html || '')
             .replace(/<br\s*\/?>/gi, '\n')
             .replace(/<\/(p|div|li|h[1-6])>/gi, '\n');
-        var lines = (div.textContent || '').split('\n')
+        var lines = (div2.textContent || '').split('\n')
             .map(function (l) { return l.replace(/\u00a0/g, ' ').trim(); })
             .filter(Boolean);
-        return lines[0] || '';
+
+        return { text: lines[0] || '', img: img };
     }
+
+    // 로고 그리기
+    function render(info) {
+        logo.innerHTML = '';
+        if (!info || (!info.text && !info.img)) return;
+
+        if (info.img) {
+            var im = document.createElement('img');
+            im.src = info.img;
+            im.alt = info.text || '';
+            im.className = 'kp-logo-img';
+            logo.appendChild(im);
+        }
+        if (info.text) {
+            var sp = document.createElement('span');
+            sp.textContent = info.text;
+            logo.appendChild(sp);
+
+            // 브라우저 탭 제목: "예약하기 - 프로젝트명"
+            var base = (document.title || '').split(' - ')[0].trim();
+            document.title = base && base !== info.text ? base + ' - ' + info.text : info.text;
+        }
+    }
+
+    // 1) 지난번에 받아둔 로고가 있으면 먼저 표시
+    try {
+        var cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+        if (cached) render(cached);
+    } catch (e) {}
 
     // 2) Blogger에서 최신 프로젝트명 받기 (JSONP)
     var cb = '__kpLogoCb_' + Date.now();
@@ -144,15 +193,17 @@
                 var title = ((e.title && e.title.$t) || '').replace(/\s/g, '');
                 return labelOk && title === '프로젝트명';
             });
-            if (post) {
-                var name = firstLine((post.content && post.content.$t) || (post.summary && post.summary.$t));
-                if (name) {
-                    applyName(name);
-                    try { localStorage.setItem(CACHE_KEY, name); } catch (e) {}
-                }
+
+            var info = post
+                ? parseProject((post.content && post.content.$t) || (post.summary && post.summary.$t))
+                : null;
+
+            if (info && (info.text || info.img)) {
+                render(info);
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(info)); } catch (e) {}
             } else {
-                // ⭐️ 프로젝트명 글이 삭제/임시저장되면 예전 이름도 지움
-                logo.textContent = '';
+                // 프로젝트명 글이 없거나 비어 있으면 예전 로고도 지움
+                logo.innerHTML = '';
                 try { localStorage.removeItem(CACHE_KEY); } catch (e) {}
             }
         } finally {
