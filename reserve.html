@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약하기 - 성북문화바캉스</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>예약하기</title>
+    <link rel="stylesheet" href="css/style.css?v=20260813">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
-<body>
+<!-- ⭐️ 예약 화면은 그대로 두고, Blogger에서는 '노출위치 : 예약하기' 팝업만 불러옵니다 -->
+<body data-page="예약하기">
+
     <div id="header-placeholder"></div>
 
     <main class="container reserve-container">
         <h2 style="text-align: center; margin-bottom: 2rem;">예약하기</h2>
-        
-        <div class="location-tabs" style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-            <label class="tab-label" style="padding:10px 20px; border:2px solid #0056b3; border-radius:5px; font-weight:bold; background-color: #f8f9fa;">
-                <!-- ⭐️ value 값을 '성북문화바캉스'로 통일 -->
-                <input type="radio" name="locationSelect" value="성북문화바캉스" checked style="display:none;">
-                <span class="tab-text" style="color:#0056b3;">📍 2026 성북 물놀이축제 (길음동 유휴부지)</span>
-            </label>
-        </div>
-        
+
+        <!-- ⭐️ 장소 탭 자리 (예약 페이지를 DB 연동으로 다시 만들 때 장소 목록이 들어갈 곳) -->
+        <div id="location-tabs" class="location-tabs" style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;"></div>
+
         <div class="reserve-grid">
             <div class="step-box">
                 <div class="step-title">날짜 선택</div>
                 <div class="calendar-header">
                     <button type="button" id="prevMonth">&lt;</button>
-                    <span id="currentMonth">2026년 7월</span>
+                    <span id="currentMonth"></span>
                     <button type="button" id="nextMonth">&gt;</button>
                 </div>
                 <table class="calendar-table">
@@ -48,16 +48,16 @@
                 <p class="step-desc" style="text-align: right; font-size: 0.8rem;">보호자 1인 ~ 4인 예약 가능</p>
                 <form id="reserveForm" class="detail-form">
                     <input type="hidden" id="date" name="date" required>
-                    
+
                     <div class="form-row">
                         <label>이름 *</label>
                         <input type="text" id="name" required>
                     </div>
-                    
+
                     <div class="form-row">
                         <label>이메일 *</label>
                         <div class="flex-row">
-                            <input type="text" id="email1" style="width:40%" required> @ 
+                            <input type="text" id="email1" style="width:40%" required> @
                             <input type="text" id="email2" style="width:50%" required>
                         </div>
                     </div>
@@ -88,6 +88,8 @@
                         </div>
                         <input type="text" id="address1" placeholder="기본주소" readonly style="width:100%; margin-bottom:5px; background:#f0f0f0;" required>
                         <input type="text" id="address2" placeholder="상세주소" style="width:100%;" required>
+                        <!-- ⭐️ 주소 안내 문구 자리 (DB 연동 시 장소별 문구가 들어감, 없으면 안 보임) -->
+                        <p id="address-notice" style="color:#dc3545; font-size:0.85rem; margin:5px 0 0; display:none;"></p>
                     </div>
 
                     <div class="form-row">
@@ -116,29 +118,41 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="js/main.js"></script>
-    <script src="js/reserve.js"></script>
+    <!-- 기존 예약 스크립트 (그대로 유지) -->
+    <script src="js/main.js?v=20260813"></script>
+    <script src="js/reserve.js?v=20260813"></script>
+
     <script>
         async function loadIncludes() {
+            function runScripts(box) {
+                box.querySelectorAll('script').forEach(old => {
+                    const s = document.createElement('script');
+                    s.textContent = old.textContent;
+                    old.replaceWith(s);
+                });
+            }
             try {
-                const headerRes = await fetch('header.html');
-                document.getElementById('header-placeholder').innerHTML = await headerRes.text();
-                
-                const footerRes = await fetch('footer.html');
-                document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
-                
+                const headerBox = document.getElementById('header-placeholder');
+                headerBox.innerHTML = await (await fetch('header.html?v=' + Date.now())).text();
+                runScripts(headerBox);
+
+                const footerBox = document.getElementById('footer-placeholder');
+                footerBox.innerHTML = await (await fetch('footer.html?v=' + Date.now())).text();
+                runScripts(footerBox);
+
                 const menuToggle = document.getElementById('menuToggle');
                 const navMenu = document.getElementById('navMenu');
                 if (menuToggle && navMenu) {
-                    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+                    menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
                 }
-            } catch (error) { console.error("헤더/푸터 로드 실패", error); }
+            } catch (e) { console.error('헤더/푸터 로드 실패', e); }
         }
         loadIncludes();
 
+        // 다음 우편번호 검색 (기존 그대로)
         function execDaumPostcode() {
             new daum.Postcode({
-                oncomplete: function(data) {
+                oncomplete: function (data) {
                     document.getElementById('postcode').value = data.zonecode;
                     document.getElementById('address1').value = data.address;
                     document.getElementById('address2').focus();
@@ -146,5 +160,8 @@
             }).open();
         }
     </script>
+
+    <!-- ⭐️ Blogger 팝업만 처리 (예약하기 페이지에는 Blogger 본문을 넣지 않음) -->
+    <script src="js/blogger-content.js?v=20260813"></script>
 </body>
 </html>
