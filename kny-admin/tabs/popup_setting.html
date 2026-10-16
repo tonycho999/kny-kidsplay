@@ -1,48 +1,56 @@
-<h2>팝업 및 우천 마감 관리</h2>
+<h2>📢 팝업 및 우천 마감 관리</h2>
 
-<!-- 우천/긴급 설정 (유지) -->
-<div class="settings-panel" style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+<!-- 🌧️ 우천/긴급 예약 차단 (DB에 저장 - 기존 기능 유지) -->
+<div class="settings-panel" style="background-color:#f8d7da; border-color:#f5c6cb; color:#721c24;">
     <h3>🚨 우천 및 긴급 예약 차단 (당일 마감)</h3>
-    <p style="font-size:0.9rem; margin-top:0;">비가 오거나 긴급 상황 시, 특정 날짜의 예약을 막고 마감 처리합니다.</p>
+    <p style="font-size:0.9rem; margin-top:0;">비가 오거나 긴급 상황 시, 특정 날짜의 회차 예약을 실제로 막습니다.</p>
     <div class="settings-row">
-        <div><label for="settingDate">마감할 날짜 선택: </label><input type="date" id="settingDate" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; margin-left: 5px;"></div>
-        <label style="display:flex; align-items:center; gap:5px; color:#dc3545;"><input type="checkbox" id="noticeActive" style="width:18px; height:18px;"><strong>우천 안내 팝업 활성화 (메인화면)</strong></label>
+        <div>
+            <label for="settingDate">마감할 날짜 선택: </label>
+            <input type="date" id="settingDate" style="padding:5px; border-radius:4px; border:1px solid #ccc; margin-left:5px;">
+        </div>
+        <label style="display:flex; align-items:center; gap:5px; color:#dc3545;">
+            <input type="checkbox" id="noticeActive" style="width:18px; height:18px;">
+            <strong>우천 안내 팝업 활성화 (메인화면)</strong>
+        </label>
         <button class="btn-save-settings" id="btnSaveSettings">긴급 설정 저장</button>
     </div>
     <div class="checkbox-group" id="dynamicSlotCheckboxes">
         <span style="font-weight:bold; margin-right:5px; color:#333;">예약 차단 회차 선택:</span>
-        <span style="font-size:0.85rem; color:#888;">(추후 DB 연동 시 등록된 회차가 자동으로 나타납니다.)</span>
+        <span id="slot-checkbox-area"><span style="font-size:0.85rem; color:#888;">회차 불러오는 중...</span></span>
     </div>
 </div>
 
-<!-- ⭐️ 변경된 동적 팝업 설정 -->
+<!-- 📢 일반 팝업 (Blogger에서 관리) -->
 <div class="cms-section">
-    <h3>📢 새 팝업 만들기</h3>
-    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">어느 페이지에 띄울지 선택하고 팝업 내용을 작성하세요. (한 페이지에 여러 개 띄우기도 가능합니다)</p>
-    
-    <div class="form-group" style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <select id="new-popup-target" style="padding:10px; border:1px solid #ccc; border-radius:4px; width:150px;">
-            <option value="main">첫 화면 (메인)</option>
-            <option value="guide">이용안내 화면</option>
-            <option value="period">운영기간 화면</option>
-            <option value="reserve">예약하기 화면</option>
-            <option value="location">오시는길 화면</option>
-        </select>
-        <input type="text" id="new-popup-title" placeholder="팝업 관리용 제목 (예: 주말 생존수영 안내)" style="flex:1;">
-    </div>
-    
-    <!-- 팝업 내용 에디터 -->
-    <div id="editor-popup-new" style="height: 150px; background: white; margin-bottom: 15px;"></div>
-    
-    <button class="btn-submit-cms" onclick="addPopup()">새 팝업 등록하기</button>
-</div>
+    <h3>📢 일반 팝업 (Blogger에서 작성)</h3>
 
-<div class="cms-section">
-    <h3>📌 현재 등록된 팝업 목록</h3>
-    <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">토글 스위치(체크박스)를 눌러 팝업을 즉시 켜고 끌 수 있습니다.</p>
-    
-    <div id="popup-list-container">
-        <!-- DB에서 불러온 팝업들이 여기에 그려집니다 -->
-        <p style="color:#999; text-align:center; padding:20px;">등록된 팝업이 없습니다.</p>
+    <div class="bl-toolbar">
+        <a class="bl-btn create" href="https://www.blogger.com/blog/post/create/6550478255785327417" target="_blank">📝 새 팝업 작성</a>
+        <a class="bl-btn manage" href="https://www.blogger.com/blog/posts/6550478255785327417" target="_blank">📋 블로그 관리 화면</a>
+        <button class="bl-btn refresh" onclick="loadBloggerContents()">🔄 새로고침</button>
+    </div>
+
+    <div class="bl-notice">
+        ✅ 제목은 <strong>팝업</strong>, 라벨은 <strong>kny-kidsplay</strong>로 작성하고 <strong>[게시]</strong>하세요.<br>
+        ✅ 본문 <strong>첫 줄</strong>에 노출위치를 적습니다. 이 줄은 홈페이지에 보이지 않습니다.<br>
+        ✅ 쓸 수 있는 이름: <strong>첫화면, 운영기간안내, 이용안내, 예약하기, 오시는길</strong> (쉼표로 여러 개 가능)<br>
+        ✅ 팝업을 끄려면 Blogger에서 해당 글을 <strong>[임시저장으로 되돌리기]</strong> 하거나 삭제하세요.
+    </div>
+
+    <p style="font-weight:bold; margin-bottom:6px;">작성 예시</p>
+    <div class="bl-example" style="margin-bottom:20px;">노출위치 : 첫화면, 예약하기
+🏊 주말 생존수영 안내
+8/15(토) 17:10~17:40 진행, 선착순 5가족</div>
+
+    <div style="overflow-x:auto;">
+        <table class="bl-table">
+            <thead>
+                <tr><th style="width:25%;">노출위치</th><th style="width:45%;">내용 미리보기</th><th style="width:15%;">최근 수정</th><th style="width:15%;">관리</th></tr>
+            </thead>
+            <tbody id="bl-popup-tbody">
+                <tr><td colspan="4" style="padding:25px; color:#888;">불러오는 중...</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
