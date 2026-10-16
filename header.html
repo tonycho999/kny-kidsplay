@@ -1,10 +1,8 @@
-<!-- ⭐️ 웹 폰트(나눔고딕 또는 맑은고딕 대용으로 깔끔한 Noto Sans KR) 불러오기 -->
+<!-- ⭐️ 웹 폰트 불러오기 -->
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
 
-    /* 헤더 전체 스타일 덮어쓰기 */
     header {
-        /* 푸른색 대신 산뜻한 민트/에메랄드 그라데이션 배경 적용 */
         background: linear-gradient(135deg, #20c997 0%, #12b886 100%) !important;
         border-bottom: none !important;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -12,30 +10,30 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-family: 'Noto Sans KR', sans-serif !important; /* 폰트 변경 */
+        font-family: 'Noto Sans KR', sans-serif !important;
     }
 
-    /* 로고 부분 */
     header .logo {
         font-size: 1.6rem !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
     }
     header .logo a {
-        color: #ffffff !important; /* 로고 글씨 흰색 */
+        color: #ffffff !important;
         text-decoration: none;
     }
+    /* ⭐️ 로고 불러오는 동안 글자 깜빡임 방지 */
+    #dynamic-logo-text { transition: opacity 0.2s; }
+    #dynamic-logo-text.loading { opacity: 0; }
 
-    /* 모바일 햄버거 메뉴 버튼 */
     header .menu-toggle {
-        color: #ffffff !important; /* 버튼 색상 흰색 */
+        color: #ffffff !important;
         background: transparent !important;
         border: none !important;
         font-size: 1.8rem !important;
         cursor: pointer;
     }
 
-    /* PC 메뉴 (가로 정렬) */
     header nav ul {
         list-style: none;
         display: flex;
@@ -44,46 +42,36 @@
         padding: 0;
     }
     header nav ul li a {
-        color: rgba(255, 255, 255, 0.9) !important; /* 메뉴 글씨 살짝 연한 흰색 */
+        color: rgba(255, 255, 255, 0.9) !important;
         text-decoration: none;
         font-weight: 700 !important;
         font-size: 1.05rem !important;
         transition: color 0.3s ease;
         padding: 5px 0;
     }
-    
-    /* 마우스 올렸을 때 메뉴 색상 */
     header nav ul li a:hover {
         color: #ffffff !important;
-        border-bottom: 2px solid #ffffff; /* 밑줄 포인트 */
+        border-bottom: 2px solid #ffffff;
     }
 
-    /* ⭐️ 모바일 반응형 메뉴 (세로 정렬) */
     @media (max-width: 768px) {
         header nav {
             display: none;
             width: 100%;
             position: absolute;
-            top: 60px; /* 헤더 높이만큼 아래로 */
+            top: 60px;
             left: 0;
-            background: #ffffff; /* 모바일 메뉴 펼쳤을 때 배경색은 흰색 */
+            background: #ffffff;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 1000;
         }
-        header nav.active {
-            display: block;
-        }
-        header nav ul {
-            flex-direction: column;
-            gap: 0;
-        }
-        header nav ul li {
-            border-bottom: 1px solid #eee;
-        }
+        header nav.active { display: block; }
+        header nav ul { flex-direction: column; gap: 0; }
+        header nav ul li { border-bottom: 1px solid #eee; }
         header nav ul li a {
             display: block;
             padding: 15px 20px !important;
-            color: #333 !important; /* 펼친 모바일 메뉴 글씨는 어두운 색 */
+            color: #333 !important;
             font-size: 1.1rem !important;
         }
         header nav ul li a:hover {
@@ -95,7 +83,8 @@
 </style>
 
 <header>
-    <div class="logo"><a href="index.html">2026 성북 물놀이축제</a></div>
+    <!-- ⭐️ 로고 글자는 Blogger '프로젝트명' 글에서 자동으로 채워집니다 -->
+    <div class="logo"><a href="index.html" id="dynamic-logo-text" class="loading">물놀이장 예약</a></div>
     <button class="menu-toggle" id="menuToggle">☰</button>
     <nav id="navMenu">
         <ul>
@@ -107,3 +96,69 @@
         </ul>
     </nav>
 </header>
+
+<script>
+(function () {
+    // ⭐️ Blogger 설정값 (라벨이 바뀌면 여기만 수정)
+    var BLOG_URL = 'https://kny-company.blogspot.com';
+    var SITE_LABEL = 'kny-kidsplay';
+    var CACHE_KEY = 'kidsplay_project_name';
+
+    var logo = document.getElementById('dynamic-logo-text');
+    if (!logo) return;
+
+    // 페이지 탭 제목: "예약하기 - 옛이름" → "예약하기 - 프로젝트명"
+    function applyName(name) {
+        if (!name) return;
+        logo.textContent = name;
+        logo.classList.remove('loading');
+        var t = document.title || '';
+        document.title = t.indexOf(' - ') > -1 ? t.split(' - ')[0] + ' - ' + name : name;
+    }
+
+    // 1) 이전에 받아둔 이름이 있으면 먼저 바로 표시 (깜빡임 방지)
+    try { applyName(localStorage.getItem(CACHE_KEY)); } catch (e) {}
+
+    // 본문 HTML의 첫 줄 글자만 뽑기
+    function firstLine(html) {
+        var div = document.createElement('div');
+        div.innerHTML = String(html || '')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/(p|div|li|h[1-6])>/gi, '\n');
+        var lines = (div.textContent || '').split('\n')
+            .map(function (l) { return l.replace(/\u00a0/g, ' ').trim(); })
+            .filter(Boolean);
+        return lines[0] || '';
+    }
+
+    // 2) Blogger에서 최신 프로젝트명 받기 (JSONP)
+    var cb = '__kidsplayHeaderCb_' + Date.now();
+    var s = document.createElement('script');
+    window[cb] = function (data) {
+        try {
+            var entries = (data.feed && data.feed.entry) || [];
+            // 라벨이 정확히 kny-kidsplay이고, 제목이 '프로젝트명'인 글 중 최신 글
+            var post = entries.find(function (e) {
+                var labelOk = (e.category || []).some(function (c) { return c.term === SITE_LABEL; });
+                var title = ((e.title && e.title.$t) || '').replace(/\s/g, '');
+                return labelOk && title === '프로젝트명';
+            });
+            if (post) {
+                var name = firstLine((post.content && post.content.$t) || (post.summary && post.summary.$t));
+                if (name) {
+                    applyName(name);
+                    try { localStorage.setItem(CACHE_KEY, name); } catch (e) {}
+                }
+            }
+        } finally {
+            logo.classList.remove('loading');
+            delete window[cb];
+            s.remove();
+        }
+    };
+    s.onerror = function () { logo.classList.remove('loading'); delete window[cb]; s.remove(); };
+    s.src = BLOG_URL + '/feeds/posts/default/-/' + encodeURIComponent(SITE_LABEL) +
+            '?alt=json-in-script&max-results=150&orderby=published&callback=' + cb + '&_=' + Date.now();
+    document.body.appendChild(s);
+})();
+</script>
