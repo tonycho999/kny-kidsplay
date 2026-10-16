@@ -24,6 +24,7 @@ const POPUP_PAGES = ['첫화면', '운영기간안내', '이용안내', '예약�
 // 전역 상태
 let isSiteConfigured = false;
 let projectName = '';
+let projectLogo = '';
 let bloggerPosts = [];
 let initOptions = null;
 let globalLocations = [];
@@ -46,6 +47,15 @@ function htmlToLines(html) {
     const div = document.createElement('div');
     div.innerHTML = withBreaks;
     return (div.textContent || '').split('\n').map(l => l.replace(/\u00a0/g, ' ').trim()).filter(Boolean);
+}
+// 프로젝트명 글: 첫 번째 이미지 + 첫 줄 글자
+function parseProject(html) {
+    const div = document.createElement('div');
+    div.innerHTML = String(html || '');
+    const imgEl = div.querySelector('img');
+    const img = imgEl ? imgEl.getAttribute('src') : '';
+    const text = htmlToLines(html)[0] || '';
+    return { text, img };
 }
 
 // =====================================================
@@ -166,16 +176,21 @@ async function loadBloggerContents() {
 
     // 프로젝트명 확인 → 잠금 여부
     const projectPost = findPosts('프로젝트명')[0];
-    projectName = projectPost ? (htmlToLines(projectPost.html)[0] || '') : '';
-    isSiteConfigured = !!projectName;
+    const info = projectPost ? parseProject(projectPost.html) : { text: '', img: '' };
+    projectName = info.text;
+    projectLogo = info.img;
+    // ⭐️ 글자 또는 이미지 중 하나라도 있으면 설정 완료
+    isSiteConfigured = !!(projectName || projectLogo);
 
     const nameEl = document.getElementById('admin-project-name');
     if (isSiteConfigured) {
-        nameEl.innerText = `${projectName} 예약관리 시스템`;
-        document.title = `${projectName} - 예약관리 시스템`;
+        const logoHtml = projectLogo ? `<img src="${escapeHtml(projectLogo)}" alt="" style="max-height:36px; vertical-align:middle; margin-right:8px;">` : '';
+        nameEl.innerHTML = `${logoHtml}${escapeHtml(projectName)} 예약관리 시스템`;
+        document.title = `${projectName || '예약관리'} - 예약관리 시스템`;
     } else {
-        nameEl.innerText = '물놀이장 예약관리 시스템';
+        nameEl.innerText = '예약관리 시스템';
     }
+
 
     if (bloggerPosts.length || pageTbody) renderPagePosts();
     renderPopupPosts();
@@ -201,7 +216,11 @@ function renderPagePosts() {
         if (latest) {
             status = `<span class="bl-ok">✅ 작성됨</span>`;
             if (posts.length > 1) status += `<span class="bl-warn">⚠️ 같은 제목 글이 ${posts.length}개 있습니다 (최신 글만 사용)</span>`;
-            if (item.title === '프로젝트명') status += `<span style="display:block; margin-top:4px; color:#333;">"${escapeHtml(projectName)}"</span>`;
+                        if (item.title === '프로젝트명') {
+                if (projectLogo) status += `<span style="display:block; margin-top:6px;"><img src="${escapeHtml(projectLogo)}" alt="" style="max-height:40px; background:#12b886; padding:4px; border-radius:4px;"></span>`;
+                if (projectName) status += `<span style="display:block; margin-top:4px; color:#333;">"${escapeHtml(projectName)}"</span>`;
+                if (!projectName && !projectLogo) status += `<span class="bl-warn">⚠️ 본문에 글자나 이미지가 없습니다</span>`;
+            }
             if (item.title === '오시는길') {
                 const hasAddr = htmlToLines(latest.html).some(l => /^주소\s*[:：]/.test(l));
                 if (!hasAddr) status += `<span class="bl-warn">⚠️ '주소 : ...' 줄이 없습니다</span>`;
