@@ -3,133 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오시는길 - 2026 성북 물놀이축제</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-
-        /* 오시는길 전용 스타일 */
-        .location-wrap {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: left;
-        }
-        .location-card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .location-card h3 {
-            color: #0056b3;
-            margin-bottom: 0.5rem;
-            font-size: 1.3rem;
-        }
-        .location-card p {
-            color: #555;
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-        
-        /* 지도 이미지 컨테이너 */
-        .map-image-container {
-            width: 100%;
-            max-width: 800px; 
-            margin: 0 auto;   
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .map-image-container:hover {
-            opacity: 0.85;
-            border-color: #0056b3;
-            box-shadow: 0 4px 10px rgba(0,86,179,0.2);
-        }
-        .map-image-container img {
-            width: 100%;       
-            height: auto;      
-            display: block;
-            object-fit: cover;
-        }
-        
-        /* '지도에서 보기' 오버레이 텍스트 */
-        .map-text {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            pointer-events: none;
-        }
-    </style>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>홈</title>
+    <link rel="stylesheet" href="css/style.css?v=20260813">
 </head>
-<body>
+<!-- ⭐️ data-page 이름이 Blogger 글 제목과 같아야 합니다 -->
+<body data-page="오시는길">
+
     <div id="header-placeholder"></div>
 
-    <main class="container location-wrap">
-        <h2 style="text-align: center; margin-bottom: 2rem;">오시는 길</h2>
-
-        <div class="location-card">
-            <h3>📍 2026 성북 물놀이축제 (길음동 유휴부지)</h3>
-            <p>위치: 서울 성북구 길음동 1285-8 일대 (길음 복합문화체육센터 건립 부지)</p>
-            
-            <!-- 클릭 시 네이버 지도 검색어로 "성북구 길음동 1285-8"가 뜨도록 설정 -->
-            <div class="map-image-container" onclick="openNaverMap('서울 성북구 길음동 1285-8')">
-                <img src="public/images/map.png" alt="성북문화바캉스 길음동 유휴부지 지도">
-                <span class="map-text">🗺️ 네이버 지도에서 보기</span>
-            </div>
+    <main>
+        <div id="kp-page-content">
+            <div class="kp-loading">불러오는 중...</div>
         </div>
     </main>
 
     <div id="footer-placeholder"></div>
-    
-    <script src="js/main.js"></script>
+
     <script>
-        // PC/모바일 구분하여 네이버 지도 여는 함수
-        function openNaverMap(query) {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const encodedQuery = encodeURIComponent(query);
-
-            if (isMobile) {
-                const appUrl = `nmap://search?query=${encodedQuery}&appname=reservation_system`;
-                const webUrl = `https://m.map.naver.com/search2/search.naver?query=${encodedQuery}`;
-                
-                setTimeout(() => {
-                    window.location.href = webUrl;
-                }, 500);
-                window.location.href = appUrl;
-            } else {
-                const pcUrl = `https://map.naver.com/v5/search/${encodedQuery}`;
-                window.open(pcUrl, '_blank');
-            }
-        }
-
-        // 헤더 및 푸터 로드 함수
         async function loadIncludes() {
+            // innerHTML로 넣은 <script>를 실제로 실행시키기
+            function runScripts(box) {
+                box.querySelectorAll('script').forEach(old => {
+                    const s = document.createElement('script');
+                    s.textContent = old.textContent;
+                    old.replaceWith(s);
+                });
+            }
             try {
-                const headerRes = await fetch('header.html');
-                document.getElementById('header-placeholder').innerHTML = await headerRes.text();
-                
-                const footerRes = await fetch('footer.html');
-                document.getElementById('footer-placeholder').innerHTML = await footerRes.text();
-                
+                const headerBox = document.getElementById('header-placeholder');
+                headerBox.innerHTML = await (await fetch('header.html?v=' + Date.now())).text();
+                runScripts(headerBox);
+
+                const footerBox = document.getElementById('footer-placeholder');
+                footerBox.innerHTML = await (await fetch('footer.html?v=' + Date.now())).text();
+                runScripts(footerBox);
+
                 const menuToggle = document.getElementById('menuToggle');
                 const navMenu = document.getElementById('navMenu');
                 if (menuToggle && navMenu) {
-                    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); });
+                    menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
                 }
-            } catch (error) { console.error("헤더/푸터 로드 실패", error); }
+            } catch (e) { console.error('헤더/푸터 로드 실패', e); }
         }
-        
         loadIncludes();
     </script>
+
+    <!-- ⭐️ Blogger 본문 + 팝업 처리 -->
+    <script src="js/blogger-content.js?v=20260813"></script>
 </body>
 </html>
